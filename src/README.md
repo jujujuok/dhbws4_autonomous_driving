@@ -11,6 +11,26 @@ Dieses "Framework" enthält eine grundlegende Struktur für die Umsetzung einer 
 
 Wir empfehlen die Pakete global zu installieren. Optional kann aber auch eine Virtuelle Umgebung angelegt werden:
 
+## Funktionierende Installation
+
+vscode: ctrl+shift+p
+>Python: Create Environment
+(select venv)
+
+open new terminal
+
+``` bash
+sudo apt-get install swig build-essential python3-dev
+pip install "gymnasium[box2d]" numpy matplotlib scipy opencv-python
+```
+
+test:
+
+``` bash
+cd src/
+python3 test_installation.py
+```
+
 ### 1.1 Globale Installation (Empfohlen)
 
 1. Installieren aller python Pakete: `pip install "gymnasium[box2d]" numpy matplotlib scipy opencv-python`
