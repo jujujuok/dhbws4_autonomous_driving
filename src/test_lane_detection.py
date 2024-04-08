@@ -11,7 +11,7 @@ from input_controller import InputController
 from lane_detection import LaneDetection
 
 
-def run(env, input_controller: InputController):
+def run(env: CarRacingEnvWrapper, input_controller: InputController):
     lane_detection = LaneDetection()
 
     seed = int(np.random.randint(0, int(1e6)))
@@ -20,12 +20,13 @@ def run(env, input_controller: InputController):
 
     while not input_controller.quit:
         lane_detection.detect(state_image)
-
-        cv_image = np.asarray(lane_detection.debug_image, dtype=np.uint8)
-        cv_image = cv2.cvtColor(cv_image, cv2.COLOR_RGB2BGR)
-        cv_image = cv2.resize(cv_image, np.asarray(state_image.shape[:2]) * 6)
-        cv2.imshow('Car Racing - Lane Detection', cv_image)
-        cv2.waitKey(1)
+        
+        lane_detection.debug = True
+        # cv_image = np.asarray(lane_detection.debug_image, dtype=np.uint8)
+        # cv_image = cv2.cvtColor(cv_image, cv2.COLOR_RGB2BGR)
+        # cv_image = cv2.resize(cv_image, np.asarray(state_image.shape[:2]) * 6)
+        # cv2.imshow('Car Racing - Lane Detection', cv_image)
+        # cv2.waitKey(1)
 
         # Step the environment
         input_controller.update()

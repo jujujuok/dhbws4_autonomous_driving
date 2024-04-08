@@ -9,6 +9,167 @@ from scipy.signal import convolve2d
 
 
 CROP_CONST = 100
+DEBUG = False
+EVALUATE = False
+
+
+@staticmethod
+def detect_green_pixels(img, threshold: int) -> np.ndarray:
+    """Detects greenish pixels in an image.
+    Only works with default image input, not changed color.
+
+    Args:
+        img (np.ndarray): The image as a numpy array.
+        threshold (int): Threshold value for green detection.
+
+    Returns:
+        np.ndarray: Array indicating greenish pixels (1) and non-greenish pixels (0).
+    """
+    t = time()
+
+    img = np.array(img)
+
+    h, w, _ = img.shape
+    green_filter = np.zeros((h, w))
+
+    # Loop through each pixel in the image
+    for y in range(h):
+        for x in range(w):
+            # Get the RGB values of the pixel
+            r, g, b = img[y][x]
+            # Check if the pixel is greenish
+            if g > r + threshold and g > b + threshold:
+                # If so, set the corresponding value in the green_filter array to 1
+                green_filter[y][x] = 1
+
+    if DEBUG:
+        print(f"green_filter calculation time: {time() - t} ms")
+        plt.imshow(green_filter)
+
+    return green_filter
+
+
+@staticmethod
+def edge_detection(img: np.ndarray) -> np.ndarray:
+    """Best one but slow
+
+    Args:
+        img (np.ndarray): input image
+
+    Returns:
+        np.ndarray: output edge detection
+    """
+
+    def sobel_edge_detection(image: np.ndarray):
+        # grayscale
+        grey_img = np.dot(image[..., :3], [0.2989, 0.5870, 0.1140])
+
+        kernel_x = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]])
+        kernel_y = np.array([[-1, -2, -1], [0, 0, 0], [1, 2, 1]])
+
+        gradient_x = convolve(grey_img, kernel_x)
+        gradient_y = convolve(grey_img, kernel_y)
+
+        # magnitude of gradients
+        sobel_mag = np.sqrt(gradient_x**2 + gradient_y**2)
+
+        return sobel_mag
+
+    def convolve(image: np.ndarray, kernel: np.ndarray):
+        image_height, image_width = image.shape
+        kernel_height, kernel_width = kernel.shape
+
+        # padding
+        pad_height = kernel_height // 2
+        pad_width = kernel_width // 2
+
+        padded_image = np.pad(
+            image,
+            ((pad_height, pad_height), (pad_width, pad_width)),
+            mode="edge",
+        )
+
+        output_image = np.zeros_like(image)
+        for i in range(image_height):
+            for j in range(image_width):
+                output_image[i, j] = np.sum(
+                    padded_image[i : i + kernel_height, j : j + kernel_width] * kernel
+                )
+
+        return output_image
+
+    t = time()
+
+    sobel_result = sobel_edge_detection(img)
+
+    if DEBUG:
+        # -------- Display the result ---------
+        print(f"edge detection calculation time: {time() - t} ms")
+        
+        plt.imshow(sobel_result, cmap="gray")
+        plt.show()
+        
+        
+    return sobel_result
+
+
+@staticmethod
+def edge_detect_scipy(img: np.ndarray) -> np.ndarray:
+    """Fast, but not optimal output so far.
+
+    Args:
+        img (np.ndarray): input image frame
+
+    Returns:
+        np.ndarray: detected edges
+    """
+    t = time()
+
+    grey_img = np.dot(img[..., :3], [0.2989, 0.5870, 0.1140])
+
+    # Sobel operator kernels
+    kernel_x = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]])
+    kernel_y = np.array([[-1, -2, -1], [0, 0, 0], [1, 2, 1]])
+
+    # Perform convolution
+    result_x = convolve2d(grey_img, kernel_x, mode="same", boundary="symm")
+    result_y = convolve2d(grey_img, kernel_y, mode="same", boundary="symm")
+
+    # Compute magnitude of the gradient
+    magnitude = np.sqrt(result_x**2 + result_y**2)
+
+    # Normalize magnitude to lie between 0 and 255
+    magnitude *= 255.0 / np.max(magnitude)
+
+    # Compute orientation of the gradient (in radians)
+    # orientation = np.arctan2(result_y, result_x)
+
+    # Combine magnitude and orientation into a single numpy array
+    # orientation_degrees = (orientation * 180 / np.pi) % 180  # Range: 0 to 180 degrees
+    # edge_combined = np.zeros_like(grey_img, dtype=np.float32)
+    # edge_combined[..., 0] = magnitude  # Magnitude as intensity (brightness)
+    # edge_combined[..., 1] = 255  # Saturation
+    # edge_combined[..., 2] = orientation_degrees  # Hue
+    # import cv2
+    # edge_combined_rgb = cv2.cvtColor(edge_combined.astype(np.uint8), cv2.COLOR_HSV2RGB)
+
+    if DEBUG:
+        print(f"scipy calculation time: {time() - t} ms")
+
+        # -------- Display the result ---------
+        plt.figure(figsize=(12, 6))
+
+        plt.subplot(1, 2, 1)
+        plt.imshow(grey_img, cmap="gray")
+        plt.title("Original Image")
+
+        plt.subplot(1, 2, 2)
+        plt.imshow(magnitude, cmap="gray")
+        # plt.colorbar(label='Magnitude')  # todo
+        plt.title("Magnitude")
+
+        plt.show()
+    return magnitude
 
 
 class LaneDetection:
@@ -16,175 +177,32 @@ class LaneDetection:
     def __init__(self):
         pass
 
-    def detect(self):
-        pass
+    def detect(self, image):
+        self.evaluation_detect(image)
+        # return edge_detect_scipy(image)
 
-    def identify_road(self, input_image_path: Path):
+    def evaluation_detect(self, image):
+
+        images = {
+            "green": detect_green_pixels(image, threshold=50),
+            "edge detect": edge_detection(image),
+            "scipy": edge_detect_scipy(image),
+        }
         
-        def detect_green_pixels(img: np.ndarray, threshold: int) -> np.ndarray:
-            """ Detects greenish pixels in an image. 
-            Only works with default image input, not changed color. 
+        plt.figure(figsize=(12, 6))
 
-            Args:
-                img (np.ndarray): The image as a numpy array.
-                threshold (int): Threshold value for green detection.
+        for i, (title, img) in enumerate(images.items()):
+            plt.subplot(1, len(images), i + 1) 
+            plt.imshow(img, cmap="gray") 
+            plt.title(title)
 
-            Returns:
-                np.ndarray: Array indicating greenish pixels (1) and non-greenish pixels (0).
-            """
-            
-            h, w, _ = img.shape
-            green_filter = np.zeros((h, w))
-
-            # Loop through each pixel in the image
-            for y in range(h):
-                for x in range(w):
-                    # Get the RGB values of the pixel
-                    r, g, b = img[y][x]
-                    # Check if the pixel is greenish
-                    if g > r + threshold and g > b + threshold:
-                        # If so, set the corresponding value in the green_filter array to 1
-                        green_filter[y][x] = 1
-
-            plt.imshow(green_filter)
-
-            return green_filter
-
-        def edge_detection(img: np.ndarray) -> np.ndarray:
-            """Best one but slow
-
-            Args:
-                img (np.ndarray): input image
-
-            Returns:
-                np.ndarray: output edge detection
-            """
-
-            def sobel_edge_detection(image: np.ndarray):
-                # Convert the image to grayscale
-                grey_img = np.dot(image[...,:3], [0.2989, 0.5870, 0.1140])
-                
-                # Sobel operator kernels
-                kernel_x = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]])
-                kernel_y = np.array([[-1, -2, -1], [0, 0, 0], [1, 2, 1]])
-                
-                # Perform convolution
-                gradient_x = convolve(grey_img, kernel_x)
-                gradient_y = convolve(grey_img, kernel_y)
-                
-                # Compute magnitude of gradients
-                sobel_mag = np.sqrt(gradient_x**2 + gradient_y**2)
-                
-                return sobel_mag
-
-            def convolve(image: np.ndarray, kernel: np.ndarray):
-                # Get dimensions of the image and kernel
-                image_height, image_width = image.shape
-                kernel_height, kernel_width = kernel.shape
-                
-                # Calculate padding
-                pad_height = kernel_height // 2
-                pad_width = kernel_width // 2
-                
-                # Pad the image
-                padded_image = np.pad(image, ((pad_height, pad_height), (pad_width, pad_width)), mode='edge')
-                
-                # Perform convolution using numpy
-                output_image = np.zeros_like(image)
-                for i in range(image_height):
-                    for j in range(image_width):
-                        output_image[i, j] = np.sum(padded_image[i:i+kernel_height, j:j+kernel_width] * kernel)
-                
-                return output_image
-            
-            # todo: set car to no edges
-
-            h, w, _ = img.shape
-            img = img[:w][: h - CROP_CONST]
-            sobel_result = sobel_edge_detection(img)
-
-            # Display the result
-            plt.imshow(sobel_result, cmap='gray')
-            plt.show()
-
-        def edge_detect_scipy(img: np.ndarray) -> np.ndarray:
-            """ Fast, but not optimal output so far. 
-
-            Args:
-                img (np.ndarray): input image frame
-
-            Returns:
-                np.ndarray: detected edges
-            """
-            
-            grey_img = np.dot(img[...,:3], [0.2989, 0.5870, 0.1140])
-            
-            # Sobel operator kernels
-            kernel_x = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]])
-            kernel_y = np.array([[-1, -2, -1], [0, 0, 0], [1, 2, 1]])
-
-            # Perform convolution
-            result_x = convolve2d(grey_img, kernel_x, mode="same", boundary="symm")
-            result_y = convolve2d(grey_img, kernel_y, mode="same", boundary="symm")
-
-            # Compute magnitude of the gradient
-            magnitude = np.sqrt(result_x**2 + result_y**2)
-
-            # Compute orientation of the gradient (in radians)
-            orientation = np.arctan2(result_y, result_x)
-
-            # Combine magnitude and orientation into a single numpy array
-            edge_combined = np.stack((magnitude, orientation), axis=-1)
-
-            print(f"calculation time: {time() - t} ms")
-
-            # sobel_result = sobel_edge_detection(img)
-
-            # Display the result
-            plt.figure(figsize=(10, 5))
-            plt.subplot(1, 4, 1)
-            plt.imshow(grey_img, cmap="gray")
-            plt.title("Original Image")
-
-            plt.subplot(1, 4, 2)
-            plt.imshow(result_x, cmap="gray")
-            plt.title("Convolved x_kernel")
-
-            plt.subplot(1, 4, 3)
-            plt.imshow(result_y, cmap="gray")
-            plt.title("Convolved y_kernel")
-
-            plt.subplot(1, 4, 4)
-            plt.imshow(edge_combined, cmap="gray")
-            plt.title("Combined Edge Detection")
-
-            plt.show()
-            
-            
-            
-        image = plt.imread(input_image_path)
-        
-        # green_filter = detect_green_pixels(np.array(image), 50)
-
-        edge_detection(image)
-
-        return image
+        plt.show()
 
 
-if __name__ == "__main__":  # Example usage:
-    input_image_path = Path(
-        "src/img/image2.png"
-    )  # Provide the path to your input image
-    ld = LaneDetection()
-    ld.identify_road(input_image_path)
-
-
-# Image.fromarray(img)
-# np.array(PILImage)
 """
 def cv2_sobel(grey_img: np.ndarray):
     # --- Edge detection ---
-    import cv2  # todo: no cv2!
+    import cv2
 
     # Apply Sobel operator in x and y directions
     sobel_x = cv2.Sobel(grey_img, cv2.CV_64F, 1, 0, ksize=3)
@@ -196,11 +214,5 @@ def cv2_sobel(grey_img: np.ndarray):
     # Normalize gradient magnitude to range [0, 255]
     gradient_magnitude *= 255.0 / gradient_magnitude.max()
 
-    return gradient_magnitude.astype(np.uint8)"""
-    
-    
-    
-"""
-        
-
+    return gradient_magnitude.astype(np.uint8)
 """
