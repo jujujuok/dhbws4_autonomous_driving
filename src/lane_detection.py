@@ -105,11 +105,10 @@ def edge_detection(img: np.ndarray) -> np.ndarray:
     if DEBUG:
         # -------- Display the result ---------
         print(f"edge detection calculation time: {time() - t} ms")
-        
+
         plt.imshow(sobel_result, cmap="gray")
         plt.show()
-        
-        
+
     return sobel_result
 
 
@@ -141,18 +140,6 @@ def edge_detect_scipy(img: np.ndarray) -> np.ndarray:
     # Normalize magnitude to lie between 0 and 255
     magnitude *= 255.0 / np.max(magnitude)
 
-    # Compute orientation of the gradient (in radians)
-    # orientation = np.arctan2(result_y, result_x)
-
-    # Combine magnitude and orientation into a single numpy array
-    # orientation_degrees = (orientation * 180 / np.pi) % 180  # Range: 0 to 180 degrees
-    # edge_combined = np.zeros_like(grey_img, dtype=np.float32)
-    # edge_combined[..., 0] = magnitude  # Magnitude as intensity (brightness)
-    # edge_combined[..., 1] = 255  # Saturation
-    # edge_combined[..., 2] = orientation_degrees  # Hue
-    # import cv2
-    # edge_combined_rgb = cv2.cvtColor(edge_combined.astype(np.uint8), cv2.COLOR_HSV2RGB)
-
     if DEBUG:
         print(f"scipy calculation time: {time() - t} ms")
 
@@ -178,8 +165,10 @@ class LaneDetection:
         pass
 
     def detect(self, image):
-        self.evaluation_detect(image)
-        # return edge_detect_scipy(image)
+        if EVALUATE:
+            self.evaluation_detect(image)
+        else:
+            return edge_detect_scipy(image)
 
     def evaluation_detect(self, image):
 
@@ -188,12 +177,12 @@ class LaneDetection:
             "edge detect": edge_detection(image),
             "scipy": edge_detect_scipy(image),
         }
-        
+
         plt.figure(figsize=(12, 6))
 
         for i, (title, img) in enumerate(images.items()):
-            plt.subplot(1, len(images), i + 1) 
-            plt.imshow(img, cmap="gray") 
+            plt.subplot(1, len(images), i + 1)
+            plt.imshow(img, cmap="gray")
             plt.title(title)
 
         plt.show()
