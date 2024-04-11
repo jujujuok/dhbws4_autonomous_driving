@@ -1,0 +1,9 @@
+swig
+Pillow
+pygame
+numpy 
+matplotlib
+scipy
+opencv-python
+gymnasium
+gymnasium[box2d]
