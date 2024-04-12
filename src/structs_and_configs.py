@@ -5,9 +5,22 @@ import numpy as np
 @dataclass
 class ConfigLaneDetection:
     carmask: np.ndarray 
-    displaycrop: int = 100
+    window_w: int
+    window_h: int
+    displaycrop: int = 105
     evaluate: bool = False
     debug: bool = False
+
+    
+@dataclass
+class CarConst:
+    pos_x: int
+    pos_y: int
+    start_h: int = 700
+    end_h: int = 802
+    start_w: int = 592
+    end_w: int = 660
+    
     
 @dataclass
 class Distances:
