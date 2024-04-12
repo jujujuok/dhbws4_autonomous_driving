@@ -4,8 +4,8 @@ import numpy as np
 
 @dataclass
 class ConfigLaneDetection:
+    carmask: np.ndarray 
     displaycrop: int = 100
-    carmask: np.ndarray
     evaluate: bool = False
     debug: bool = False
     

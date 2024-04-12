@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -10,20 +11,19 @@ from lane_detection_helper import detect_green_pixels, edge_detect_scipy, edge_d
 class LaneDetection:
 
     def __init__(self):
-        self.debug = ConfigLaneDetection.debug
         self.evaluate = ConfigLaneDetection.evaluate
         
     def detect(self, image: np.ndarray):
         # crop info display
-        image = image[:image.shape(0) - ConfigLaneDetection.displaycrop, :, :]
-        
+        image = image[:image.shape[0]-ConfigLaneDetection.displaycrop, :, :]
+
         return edge_detect_scipy(image) if not self.evaluate else self.evaluation_detect(image)
     
     def evaluation_detect(self, image):
         images = {
-            "green": detect_green_pixels(image, threshold=50, debug=self.debug),
-            "edge detect": edge_detection(image, self.debug),
-            "scipy": edge_detect_scipy(image, self.debug),
+            "green": detect_green_pixels(image, threshold=50),
+            "edge detect": edge_detection(image),
+            "scipy": edge_detect_scipy(image),
         }
 
         plt.figure(figsize=(12, 6))
@@ -36,6 +36,13 @@ class LaneDetection:
         plt.show()
         
         return images["scipy"]
+
+
+if __name__ == "__main__":
+    ld = LaneDetection()
+    ld.evaluate = True
+    ld.detect(np.array(Image.open("/home/juju/dev/dhbws4_autonomous_driving/src/img/image.png")))
+
 
 
 """
