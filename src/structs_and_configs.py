@@ -16,10 +16,10 @@ class ConfigLaneDetection:
 class CarConst:
     pos_w: int = 48
     pos_h: int = 85
-    # start_h: int = 700
-    # end_h: int = 802
-    # start_w: int = 592
-    # end_w: int = 660
+    start_h: int = 700
+    end_h: int = 802
+    start_w: int = 592
+    end_w: int = 660
     
     
 @dataclass
@@ -29,3 +29,9 @@ class Distances:
     left: int
     front_left: int
     front_right: int
+
+
+@dataclass
+class CarVectors:
+    front: float
+    longest_vector: list[int, int] # h & w

@@ -42,9 +42,9 @@ class LaneDetection:
         image = image[:image.shape[0]-ConfigLaneDetection.displaycrop, :, :]
         
         # mask the car
-        image[CarConst.start_h:CarConst.end_h, 
-              CarConst.start_w:CarConst.end_w, 
-              :] = np.zeros((102, 68, 3))
+        # image[CarConst.start_h:CarConst.end_h, 
+        #       CarConst.start_w:CarConst.end_w, 
+        #       :] = np.zeros((102, 68, 3))
         
         image = edge_detect_scipy(image) if not self.evaluate else self.evaluation_detect(image)
         
@@ -128,7 +128,8 @@ class LaneDetection:
 
 if __name__ == "__main__":
     ld = LaneDetection()
-    i = Image.open("/home/juju/dev/dhbws4_autonomous_driving/src/img/image.jpg")
+    # i = Image.open("/home/juju/dev/dhbws4_autonomous_driving/src/img/image.jpg")
+    i = Image.open("/home/juju/dev/dhbws4_autonomous_driving/src/img/img_96_96_0.png")
     ld.detect(np.array(i))
 
 
