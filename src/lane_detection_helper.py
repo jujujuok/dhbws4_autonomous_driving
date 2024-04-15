@@ -3,9 +3,9 @@ import matplotlib.pyplot as plt
 from time import time
 from scipy.signal import convolve2d
 
-from structs_and_configs import DEBUG, ConfigLaneDetection
+from structs_and_configs import ConfigLaneDetection
 
-def detect_green_pixels(img, threshold: int, debug: bool = False) -> np.ndarray:
+def detect_green_pixels(img, threshold: int) -> np.ndarray:
     """Detects greenish pixels in an image.
     Only works with default image input, not changed color.
 
@@ -33,7 +33,7 @@ def detect_green_pixels(img, threshold: int, debug: bool = False) -> np.ndarray:
                 # If so, set the corresponding value in the green_filter array to 1
                 green_filter[y][x] = 1
 
-    if debug:
+    if ConfigLaneDetection.debug:
         print(f"green_filter calculation time: {time() - t} ms")
         plt.imshow(green_filter)
 
@@ -41,7 +41,7 @@ def detect_green_pixels(img, threshold: int, debug: bool = False) -> np.ndarray:
 
 
 @staticmethod
-def edge_detection(img: np.ndarray, debug: bool = False) -> np.ndarray:
+def edge_detection(img: np.ndarray) -> np.ndarray:
     """Best one but slow
 
     Args:
@@ -93,7 +93,7 @@ def edge_detection(img: np.ndarray, debug: bool = False) -> np.ndarray:
 
     sobel_result = sobel_edge_detection(img)
 
-    if debug:
+    if ConfigLaneDetection.debug:
         # -------- Display the result ---------
         print(f"edge detection calculation time: {time() - t} ms")
 
@@ -104,7 +104,7 @@ def edge_detection(img: np.ndarray, debug: bool = False) -> np.ndarray:
 
 
 @staticmethod
-def edge_detect_scipy(img: np.ndarray, debug: bool = False) -> np.ndarray:
+def edge_detect_scipy(img: np.ndarray) -> np.ndarray:
     """Fast, but not optimal output so far.
 
     Args:
@@ -131,7 +131,7 @@ def edge_detect_scipy(img: np.ndarray, debug: bool = False) -> np.ndarray:
     # Normalize magnitude to lie between 0 and 255
     magnitude *= 255.0 / np.max(magnitude)
 
-    if debug:
+    if ConfigLaneDetection.debug:
         print(f"scipy calculation time: {time() - t} ms")
 
         # -------- Display the result ---------
