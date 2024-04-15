@@ -50,17 +50,17 @@ class LaneDetection:
         
         show_plt_img_grey(image=image)
         
-        image = (image > 40).astype(np.uint8)
+        # image = (image > 40).astype(np.uint8)
         
         # segment left/right lane 
-        image = self.lane_clustering(image, 50)
+        # image = self.lane_clustering(image, 50)
         
-        plt.imshow(image, cmap='viridis')  
-        plt.colorbar() 
-        plt.title('Lane Clusters')
-        plt.xlabel('X')
-        plt.ylabel('Y')
-        plt.show()
+        # plt.imshow(image, cmap='viridis')  
+        # plt.colorbar() 
+        # plt.title('Lane Clusters')
+        # plt.xlabel('X')
+        # plt.ylabel('Y')
+        # plt.show()
         
         return image
 

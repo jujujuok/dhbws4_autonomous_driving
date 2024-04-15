@@ -14,12 +14,12 @@ class ConfigLaneDetection:
     
 @dataclass
 class CarConst:
-    pos_x: int
-    pos_y: int
-    start_h: int = 700
-    end_h: int = 802
-    start_w: int = 592
-    end_w: int = 660
+    pos_w: int = 48
+    pos_h: int = 85
+    # start_h: int = 700
+    # end_h: int = 802
+    # start_w: int = 592
+    # end_w: int = 660
     
     
 @dataclass
