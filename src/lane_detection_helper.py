@@ -144,7 +144,7 @@ def edge_detect_scipy(img: np.ndarray) -> np.ndarray:
         plt.subplot(1, 2, 2)
         plt.imshow(magnitude, cmap="gray")
         # plt.colorbar(label='Magnitude')  # todo
-        plt.title("Magnitude")
+        plt.title("Raw output of edge detection with scipy")
 
         plt.show()
     return magnitude
