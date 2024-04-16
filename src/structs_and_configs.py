@@ -13,7 +13,7 @@ class ImageConfig:
 @dataclass
 class ConfigLaneDetection:
     evaluate: bool = False
-    debug: bool = False
+    debug: bool = True
 
 
 @dataclass
@@ -24,10 +24,3 @@ class CarConst:
     end_h: int = 78
     start_w: int = 44
     end_w: int = 51
-
-
-@dataclass
-class CarVectors:
-    front: float
-    longest_vector: np.ndarray  # length 2: [h, w]
-

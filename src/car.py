@@ -6,7 +6,6 @@ from lane_detection import LaneDetection
 from lateral_control import LateralControl
 from longitudinal_control import LongitudinalControl
 from path_planning import PathPlanning
-from structs_and_configs import CarVectors
 
 class Car:
 

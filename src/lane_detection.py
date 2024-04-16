@@ -4,7 +4,7 @@ from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
 
-from structs_and_configs import CarVectors, CarConst, ImageConfig, ConfigLaneDetection
+from structs_and_configs import CarConst, ImageConfig, ConfigLaneDetection
 
 from helper import show_plt_img_grey
 
