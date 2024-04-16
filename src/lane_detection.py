@@ -4,7 +4,7 @@ from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
 
-from structs_and_configs import CarVectors, CarConst, ImageConfig
+from structs_and_configs import CarVectors, CarConst, ImageConfig, ConfigLaneDetection
 
 from helper import show_plt_img_grey
 
@@ -136,10 +136,18 @@ class LaneDetection:
 
 
 if __name__ == "__main__":
-    ld = LaneDetection()
-    # i = Image.open("/home/juju/dev/dhbws4_autonomous_driving/src/img/image.jpg")
-    i = Image.open("/home/juju/dev/dhbws4_autonomous_driving/img0.jpg")
-    ld.detect(np.array(i))
+    if ConfigLaneDetection.debug:
+
+        from path_planning import PathPlanning
+
+        ld = LaneDetection()
+        pp = PathPlanning()
+
+        # i = Image.open("/home/juju/dev/dhbws4_autonomous_driving/src/img/image.jpg")
+        i = Image.open("/home/juju/dev/dhbws4_autonomous_driving/test/img0.jpg")
+
+        lanes = ld.detect(np.array(i))
+        print(pp.plan(lanes))
 
 
 """
