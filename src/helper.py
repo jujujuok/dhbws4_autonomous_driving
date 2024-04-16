@@ -6,7 +6,7 @@ def show_plt_img_grey(image: np.ndarray):
     plt.imshow(image, cmap="grey")
     plt.show()
 
-def vector_length(vector: np.ndarrray) -> float:
+def vector_length(vector: np.ndarray) -> float:
     return np.linalg.norm(vector)
 
 def angle_of_vectors(a: np.ndarray, b: np.ndarray) -> float:
