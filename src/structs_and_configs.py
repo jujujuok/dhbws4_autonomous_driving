@@ -3,35 +3,31 @@ import numpy as np
 
 
 @dataclass
+class ImageConfig:
+    displaycrop: int = 14
+    width: int = 96
+    height: int = 96
+    height_cropped = height - displaycrop
+
+
+@dataclass
 class ConfigLaneDetection:
-    carmask: np.ndarray 
-    window_w: int
-    window_h: int
-    displaycrop: int = 105
     evaluate: bool = False
     debug: bool = False
 
-    
+
 @dataclass
 class CarConst:
     pos_w: int = 48
-    pos_h: int = 85
-    start_h: int = 700
-    end_h: int = 802
-    start_w: int = 592
-    end_w: int = 660
-    
-    
-@dataclass
-class Distances:
-    front: int
-    right: int
-    left: int
-    front_left: int
-    front_right: int
+    pos_h: int = 80
+    start_h: int = 65
+    end_h: int = 78
+    start_w: int = 44
+    end_w: int = 51
 
 
 @dataclass
 class CarVectors:
     front: float
-    longest_vector: list[int, int] # h & w
+    longest_vector: np.ndarray  # length 2: [h, w]
+
