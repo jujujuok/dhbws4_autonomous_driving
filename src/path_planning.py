@@ -14,7 +14,7 @@ class PathPlanning:
         self.state.left = DistDir(0, -1)
 
     def get_state_list(self):
-        self.state_list = [self.state.front, self.state.right, self.state.left]
+        return [self.state.front, self.state.right, self.state.left]
 
     def sensor_application(self, image: np.ndarray):
         # front

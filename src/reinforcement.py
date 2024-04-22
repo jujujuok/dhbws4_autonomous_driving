@@ -1,9 +1,9 @@
 import numpy as np
+from structs_and_configs import RLAction, State, state_to_index, rlaction_to_index
 
 
 class QLearningAgent:
     def __init__(self, state_size, action_size):
-
         self.state_size = state_size
         self.action_size = action_size
         self.learning_rate: float = 0.1
@@ -13,53 +13,53 @@ class QLearningAgent:
         self.exploration_min: float = 0.01
         self.q_table = np.zeros((state_size, action_size))
 
-    def choose_action(self, state) -> np.ndarray:
-        if np.random.rand() < self.exploration_rate:
-            return np.random.randint(self.action_size)
-        return np.argmax(self.q_table[state, :])
+    def choose_action(self, state: State) -> RLAction:
+        """
+        gets the state and chooses how to steer 
 
-    def update_q_table(self, state, action, reward, next_state):
-        best_next_action = np.argmax(self.q_table[next_state, :])
-        td_target = (
-            reward + self.discount_factor * self.q_table[next_state, best_next_action]
+        Args:
+            state (State): (3 distances around the car to the lanes around 
+                            it, front, right, left and the current speed)
+
+        Returns:
+            RLAction: 
+                - steering: [-1:1] (right <-> left)
+                - acceleration: [-1:1] -> gas:[0,1]; breaking: [-1,0]
+        """
+        if np.random.rand() < self.exploration_rate:  # Exploration: choose a random action
+            a = RLAction
+            a.steering = np.random.uniform(-1, 1)
+            a.acceleration = np.random.uniform(0, 1)
+            return a
+        else:
+            # Exploitation: choose the action with the highest Q-value
+            state_index = state_to_index(state)
+            action_index = np.argmax(self.q_table[state_index])
+            steering = (action_index % self.action_size) / (self.action_size - 1) * 2 - 1
+            acceleration = (action_index // self.action_size) / (self.action_size - 1)
+            return RLAction(steering, acceleration)
+
+    def update_q_table(self, state: State, action: RLAction, reward):
+        """
+        Updates the Q-table based on the observed transition.
+
+        Args:
+            state (State): The current state.
+            action (RLAction): The chosen action.
+            reward (float): The observed reward.
+        """
+        state_index = state_to_index(state)
+        action_index = rlaction_to_index(action)
+        
+        # Q-learning update rule
+        self.q_table[state_index, action_index] += self.learning_rate * (
+            reward + self.discount_factor * np.max(self.q_table[state_index]) - self.q_table[state_index, action_index]
         )
-        td_error = td_target - self.q_table[state, action]
-        self.q_table[state, action] += self.learning_rate * td_error
 
-        self.exploration_rate = max(
-            self.exploration_min, self.exploration_rate * self.exploration_decay
-        )
+        # Decay exploration rate
+        self.exploration_rate = max(self.exploration_min, self.exploration_rate * self.exploration_decay)
 
-if __name__ == "__main__":
+    # After training, you can use the Q-learning agent to drive the car in the environment
+    # by choosing actions based on the learned Q-values
 
-    # Define state and action spaces
-    state_size = 6  # Number of features (current speed and distances to lanes)
-    action_size = 3  # Number of actions (steering, gas, braking)
-
-    # Initialize Q-learning agent
-    agent = QLearningAgent(state_size, action_size)
-
-# Training loop
-num_episodes = 1000
-for episode in range(num_episodes):
-    state = env.reset()  # Reset the environment to start a new episode
-    done = False
-    total_reward = 0
-
-    while not done:
-        # Choose action
-        action = agent.choose_action(state)
-
-        # Take action and observe next state and reward
-        next_state, reward, done = env.step(action)
-
-        # Update Q-table
-        agent.update_q_table(state, action, reward, next_state)
-
-        state = next_state
-        total_reward += reward
-
-    print(f"Episode {episode + 1}/{num_episodes}, Total Reward: {total_reward}")
-
-# After training, you can use the Q-learning agent to drive the car in the environment
-# by choosing actions based on the learned Q-values
+    # todo, front_left and front_right)

@@ -22,11 +22,11 @@ class RLConfig:  # ReinforcementLearning
     train: bool = True
     test: bool = False
 
-    state_size: int = 6  # Number of features (current speed and distances to lanes)
-    action_size: int = 3  # Number of actions (steering, gas, braking)
+    state_size: int = 4  # Number of features (current speed and distances to lanes)
+    action_size: int = 2  # Number of actions (steering, gas, braking)
 
     num_episodes: int = 1000
-    reward: int = 1
+    # reward: int
 
 
 class DistDir:
@@ -50,8 +50,14 @@ class RLAction:
     - breaking, 0 is no break, 1 is full break
     """
     steering: float = 0  # [-1:1]
-    breaking: float = 0  # [-1:1]
-    acceleration: float = 0  # [-1:1]
+    acceleration: float = 0  # [-1:1] -> gas:[0,1]; breaking: [-1,0]
+    action_size: int = 2
+
+def rlaction_to_index(a: RLAction):
+    # Convert steering and acceleration to discrete indices
+    steering_index = int((a.steering + 1) * (a.action_size - 1) / 2)
+    acceleration_index = int((a.acceleration + 1) * (a.action_size - 1) / 2)
+    return steering_index * a.action_size * a.action_size + acceleration_index * a.action_size
 
 
 @dataclass
@@ -62,6 +68,10 @@ class State:
     front: DistDir
     # front_left: DistDir
     # front_right: DistDir
+
+def state_to_index(s:State) -> int:
+    # Convert state into a hashable representation
+    return hash((s.speed, s.left.dist, s.right.dist, s.front.dist))
 
 
 @dataclass
