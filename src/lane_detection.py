@@ -35,6 +35,9 @@ class LaneDetection:
         plt.show()
 
         return images["scipy"]
+    
+    def reinforcement_lane_detection(self, image) -> np.ndarray:
+        return detect_green_pixels(image, threshold=50)
 
     def detect_lanes(self, image: np.ndarray) -> np.ndarray:
         # crop info display

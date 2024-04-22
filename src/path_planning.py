@@ -1,31 +1,20 @@
 from __future__ import annotations
 import numpy as np
-from structs_and_configs import CarConst, ImageConfig
+from structs_and_configs import CarConst, ImageConfig, DistDir, State
 from helper import show_plt_img_grey, vector_length
-
-
-class DistDir:
-    def __init__(self, label: str, h: int, w: int):
-        self.label = label
-        self.dist: float = 0
-        self.h = h
-        self.w = w
-
-    def get_vector(self) -> np.ndarray:
-        return np.array([self.h, self.w]) * self.dist
-
-    def get_length(self) -> float:
-        return np.linalg.norm(self.get_vector())
 
 
 class PathPlanning:
 
     def __init__(self):
-        self.front = DistDir("front", -1, 0)
-        self.dist_dir = [
-            DistDir("right", 0, 1),
-            DistDir("left", 0, -1),
-        ]
+        self.state = State
+
+        self.state.front = DistDir(-1, 0)
+        self.state.right = DistDir(0, 1)
+        self.state.left = DistDir(0, -1)
+
+    def get_state_list(self):
+        self.state_list = [self.state.front, self.state.right, self.state.left]
 
     def sensor_application(self, image: np.ndarray):
         # front
@@ -37,10 +26,10 @@ class PathPlanning:
             and image[dh][CarConst.pos_w] != 1
         ):
             dh = dh + self.front.h
-            self.front.dist = self.front.dist + 1
+            self.state.front.dist = self.state.front.dist + 1
 
         # sides etc
-        for element in self.dist_dir:
+        for element in self.get_state_list():
             dw = CarConst.pos_w
             dh = CarConst.pos_h
 
@@ -63,14 +52,19 @@ class PathPlanning:
     def plan(self, image: np.ndarray) -> list[float, np.ndarray]:
         self.sensor_application(image)
 
-        # i = image * 255
-        # show_plt_img_grey(i)
+        lv = self.state.front
 
-        lv = self.front
-
-        # get longest vector
-        for element in self.dist_dir:
+        for element in self.get_state_list():
             if element.dist > lv.dist:
                 lv = element
 
-        return self.front.dist, lv.get_vector()
+        return self.state.front.dist, lv.get_vector()
+
+    def reinforcement_path_planning(self, image:np.ndarray) -> State:
+        
+        self.sensor_application(image)
+
+        return self.state
+        
+
+
