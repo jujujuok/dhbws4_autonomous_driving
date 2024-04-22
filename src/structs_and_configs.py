@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 import numpy as np
 
+FRONT_DIRECTION = np.array([-1, 0])
 
 @dataclass
 class ImageConfig:
@@ -14,6 +15,18 @@ class ImageConfig:
 class ConfigLaneDetection:
     evaluate: bool = False
     debug: bool = False
+
+
+@dataclass
+class RLConfig:  # ReinforcementLearning
+    train: bool = True
+    test: bool = False
+
+    state_size: int = 6  # Number of features (current speed and distances to lanes)
+    action_size: int = 3  # Number of actions (steering, gas, braking)
+
+    num_episodes: int = 1000
+    reward: int = 1
 
 
 @dataclass
