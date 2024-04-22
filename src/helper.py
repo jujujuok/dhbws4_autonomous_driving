@@ -6,39 +6,26 @@ def show_plt_img_grey(image: np.ndarray):
     plt.imshow(image, cmap="grey")
     plt.show()
 
-import numpy as np
+def vector_length(vector: np.ndarray) -> float:
+    return np.linalg.norm(vector)
 
-def find_clusters(array):
-    clusters = []
-    visited = np.zeros_like(array)
+def angle_of_vectors(a: np.ndarray, b: np.ndarray) -> float:
+    """
+    Raises:
+        ValueError: some vector has 0 length 
 
-    def explore_cluster(row, col, cluster):
-        if row < 0 or col < 0 or row >= array.shape[0] or col >= array.shape[1]:
-            return
-        if visited[row][col] or array[row][col] == 0:
-            return
-        visited[row][col] = 1
-        cluster.append((row, col))
-
-        explore_cluster(row + 1, col, cluster)
-        explore_cluster(row - 1, col, cluster)
-        explore_cluster(row, col + 1, cluster)
-        explore_cluster(row, col - 1, cluster)
-
-    for i in range(array.shape[0]):
-        for j in range(array.shape[1]):
-            if not visited[i][j] and array[i][j] == 1:
-                cluster = []
-                explore_cluster(i, j, cluster)
-                clusters.append(cluster)
-
-    return clusters
-
-# Example usage:
-arr = np.array([[1, 0, 0, 1, 0],
-                [1, 1, 0, 0, 1],
-                [0, 0, 0, 1, 1],
-                [0, 1, 0, 0, 0],
-                [1, 1, 1, 0, 1]])
-
-print(find_clusters(arr))
+    Returns:
+        float: the angle (0-180 degrees) between 2 vectors
+    """
+    dot_product = np.dot(a, b)
+    a_norm = np.linalg.norm(a)
+    b_norm = np.linalg.norm(b)
+    
+    if a_norm == 0 or b_norm == 0:
+        raise ValueError("One or both vectors have zero length.")
+    
+    cos_theta = dot_product / (a_norm * b_norm)
+    theta_rad = np.arccos(np.clip(cos_theta, -1.0, 1.0))
+    theta_deg = np.degrees(theta_rad)
+    
+    return theta_deg
