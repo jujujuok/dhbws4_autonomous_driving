@@ -13,7 +13,7 @@ class ImageConfig:
 @dataclass
 class ConfigLaneDetection:
     evaluate: bool = False
-    debug: bool = True
+    debug: bool = False
 
 
 @dataclass
