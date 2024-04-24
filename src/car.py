@@ -34,12 +34,19 @@ class Car:
         # target_speed = self._longitudinal_control.predict_target_speed(curvature)
         # acceleration, braking = self._longitudinal_control.control(info['speed'], target_speed, steering_angle)
 
+        # Führen Sie die Fahrspurerkennung durch
         lanes = self._lane_detection.detect(observation)
+
+        # Führen Sie die Pfadplanung durch, um die Richtung und die längste erkannte Linie zu erhalten
         front, longest_vector = self._path_planning.plan(lanes)
-         
+
+        # Rufen Sie die longitudinale Steuerung auf, um Beschleunigung und Bremsen zu bestimmen
         acceleration, braking = self._longitudinal_control(front, longest_vector)
+
+        # Rufen Sie die laterale Steuerung auf, um den Lenkwinkel zu bestimmen
         steering_angle = self._lateral_control(front, longest_vector)
 
+        # Erstellen Sie eine Liste mit den Aktionen (Lenkung, Beschleunigung und Bremsen)
         action = [steering_angle, acceleration, braking]
 
         return action
