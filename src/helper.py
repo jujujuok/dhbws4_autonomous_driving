@@ -1,6 +1,16 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+def test_visualize(image: np.ndarray):
+    import cv2
+    image = image * 255
+
+    cv_image = np.asarray(image, dtype=np.uint8)
+    cv_image = cv2.cvtColor(cv_image, cv2.COLOR_RGB2BGR)
+    cv_image = cv2.resize(cv_image, np.asarray(image.shape[:2]) * 6)
+    cv2.imshow('Car Racing - Lane Detection', cv_image)
+    cv2.waitKey(1)
+
 
 def show_plt_img_grey(image: np.ndarray):
     plt.imshow(image, cmap="grey")

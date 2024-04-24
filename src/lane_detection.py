@@ -55,8 +55,8 @@ class LaneDetection:
 
         image = self.detect_lanes(image=image)
 
-        i = image * 255
-        show_plt_img_grey(i)
+        # i = image * 255
+        # show_plt_img_grey(i)
 
         # segment left/right lane
         # image = self.lane_clustering(image, 50)
@@ -136,18 +136,20 @@ class LaneDetection:
 
 
 if __name__ == "__main__":
-    if ConfigLaneDetection.debug:
 
-        from path_planning import PathPlanning
+    from path_planning import PathPlanning
 
-        ld = LaneDetection()
-        pp = PathPlanning()
+    ld = LaneDetection()
+    pp = PathPlanning()
 
-        # i = Image.open("/home/juju/dev/dhbws4_autonomous_driving/src/img/image.jpg")
-        i = Image.open("/home/juju/dev/dhbws4_autonomous_driving/test/img0.jpg")
+    # i = Image.open("/home/juju/dev/dhbws4_autonomous_driving/src/img/image.jpg")
+    i = Image.open("/home/juju/dev/dhbws4_autonomous_driving/test/img0.jpg")
 
-        lanes = ld.detect(np.array(i))
-        print(pp.plan(lanes))
+    lanes = ld.detect(np.array(i))
+    from helper import test_visualize
+    test_visualize(lanes)
+
+    print(pp.plan(lanes))
 
 
 """
