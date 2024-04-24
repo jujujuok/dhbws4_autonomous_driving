@@ -16,7 +16,6 @@ class ConfigLaneDetection:
     evaluate: bool = False
     debug: bool = False
 
-
 @dataclass
 class RLConfig:  # ReinforcementLearning
     train: bool = True
