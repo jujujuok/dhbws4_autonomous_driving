@@ -20,24 +20,22 @@ def detect_green_pixels(img, threshold: int) -> np.ndarray:
 
     img = np.array(img)
 
-    h, w, _ = img.shape
-    green_filter = np.zeros((h, w))
 
-    # Loop through each pixel in the image
-    for y in range(h):
-        for x in range(w):
-            # Get the RGB values of the pixel
-            r, g, b = img[y][x]
-            # Check if the pixel is greenish
-            if g > r + threshold and g > b + threshold:
-                # If so, set the corresponding value in the green_filter array to 1
-                green_filter[y][x] = 1
+    # Extract RGB channels
+    r = img[:,:,0]
+    g = img[:,:,1]
+    b = img[:,:,2]
+
+    # Check condition for greenish pixels
+    green_mask = (g > r + threshold) & (g > b + threshold)
+
+    green_mask = green_mask.astype(int)
 
     if ConfigLaneDetection.debug:
         print(f"green_filter calculation time: {time() - t} ms")
-        plt.imshow(green_filter)
+        plt.imshow(green_mask)
 
-    return green_filter
+    return green_mask
 
 
 @staticmethod

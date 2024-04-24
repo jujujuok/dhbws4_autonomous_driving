@@ -15,6 +15,8 @@ class LaneDetection:
 
     def __init__(self):
         self.evaluate = False  # ConfigLaneDetection.evaluate
+        self.debug = True
+        self.debug_image: np.ndarray 
 
     def evaluation_detect(self, image):
         images = {
@@ -55,9 +57,6 @@ class LaneDetection:
 
         image = self.detect_lanes(image=image)
 
-        # i = image * 255
-        # show_plt_img_grey(i)
-
         # segment left/right lane
         # image = self.lane_clustering(image, 50)
 
@@ -65,8 +64,6 @@ class LaneDetection:
 
     def lane_clustering(self, image: np.ndarray, min_points: int) -> np.ndarray:
         """
-        todo this doesnt work recursively because the stack is too small
-
         - map all values to a 2d numpy array with either ones or zeros.
         - minimal threshold and start with a random 1
         - Detect all the neighbour 1s and append to cluster.
