@@ -26,10 +26,11 @@ class QLearningAgent:
                 - steering: [-1:1] (right <-> left)
                 - acceleration: [-1:1] -> gas:[0,1]; breaking: [-1,0]
         """
+
         if np.random.rand() < self.exploration_rate:  # Exploration: choose a random action
             a = RLAction
             a.steering = np.random.uniform(-1, 1)
-            a.acceleration = np.random.uniform(0, 1)
+            a.acceleration = np.random.uniform(-1, 1)
             return a
         else:
             # Exploitation: choose the action with the highest Q-value
@@ -38,6 +39,30 @@ class QLearningAgent:
             steering = (action_index % self.action_size) / (self.action_size - 1) * 2 - 1
             acceleration = (action_index // self.action_size) / (self.action_size - 1)
             return RLAction(steering, acceleration)
+        
+
+    def update_q_table(self, state, action, reward, next_state=None):
+        """
+        Updates the Q-table based on the Bellman equation.
+
+        Args:
+            state: The current state of the environment.
+            action: The action taken in the current state.
+            reward: The reward received for taking the action.
+            next_state: The next state of the environment (optional).
+        """
+        if next_state is None:
+            # Update rule for terminal state
+            q_target = reward
+        else:
+            # Update rule for non-terminal state
+            q_target = reward + self.discount_factor * np.max(self.q_table[next_state, :])
+
+        q_current = self.q_table[state, action]
+        self.q_table[state, action] += self.learning_rate * (q_target - q_current)
+
+        # Update epsilon for exploration vs exploitation balance
+        self.epsilon = max(self.exploration_min, self.epsilon * self.exploration_decay)
 
     def update_q_table(self, state: State, action: RLAction, reward):
         """

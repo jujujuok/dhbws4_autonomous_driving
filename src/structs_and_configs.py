@@ -53,11 +53,7 @@ class RLAction:
     acceleration: float = 0  # [-1:1] -> gas:[0,1]; breaking: [-1,0]
     action_size: int = 2
 
-def rlaction_to_index(a: RLAction):
-    # Convert steering and acceleration to discrete indices
-    steering_index = int((a.steering + 1) * (a.action_size - 1) / 2)
-    acceleration_index = int((a.acceleration + 1) * (a.action_size - 1) / 2)
-    return steering_index * a.action_size * a.action_size + acceleration_index * a.action_size
+
 
 
 @dataclass
@@ -68,10 +64,6 @@ class State:
     front: DistDir
     # front_left: DistDir
     # front_right: DistDir
-
-def state_to_index(s:State) -> int:
-    # Convert state into a hashable representation
-    return hash((s.speed, s.left.dist, s.right.dist, s.front.dist))
 
 
 @dataclass
