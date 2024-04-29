@@ -31,20 +31,11 @@ def run(env, input_controller: InputController):
 
         image = lane_detection.detect(state_image)
 
-        longest_vector = path_planning.plan(image)
+        state, longest_vector = path_planning.plan(image)
 
-        angle = 0
+        angle = lateral_control.control(longest_vector)
         
-        if longest_vector[0] != 0 and longest_vector[1] != 0:
-
-            print(f"longest vector: {longest_vector}")
-
-            angle = lateral_control.control(longest_vector)
-
-        # state = path_planning.get_state(image)
-        # front = state.front.get_vector()
-
-        # -----------
+        # ----------- visualization -----------
 
         cv_image = image * 255
 

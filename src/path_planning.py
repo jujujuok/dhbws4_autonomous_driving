@@ -52,7 +52,7 @@ class PathPlanning:
 
         return state
 
-    def plan(self, image: np.ndarray) -> np.ndarray:
+    def plan(self, image: np.ndarray) -> list[State, np.ndarray]:
         """
         Args:
             image (np.ndarray): lanes detected by the LaneDetection class
@@ -68,7 +68,7 @@ class PathPlanning:
             if element.dist > lv.dist:
                 lv = element
 
-        return lv.get_vector()
+        return state, lv.get_vector()
     
     def get_state(self, image)->State:
         return self.sensor_application(image)
