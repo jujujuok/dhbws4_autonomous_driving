@@ -72,7 +72,7 @@ class State:
 @dataclass
 class CarConst:
     pos_w: int = 48
-    pos_h: int = 70
+    pos_h: int = 64
     start_h: int = 65
     end_h: int = 78
     start_w: int = 44
