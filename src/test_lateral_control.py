@@ -33,7 +33,7 @@ def run(env, input_controller: InputController):
 
         state, longest_vector = path_planning.plan(image)
 
-        angle = lateral_control.control(longest_vector)
+        angle = lateral_control.control(longest_vector, state)
         
         # ----------- visualization -----------
 
