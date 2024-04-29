@@ -12,7 +12,7 @@ class DistDir:
         self.w = w
 
     def get_vector(self) -> np.ndarray:
-        return np.array([self.h, self.w]) * self.dist
+        return np.array([self.w, self.h]) * self.dist
 
     def get_length(self) -> float:
         return np.linalg.norm(self.get_vector())
@@ -30,6 +30,7 @@ class PathPlanning:
     def sensor_application(self, image: np.ndarray):
         # front
         dh = CarConst.pos_h
+        self.front.dist = 1
         while (
             dh < ImageConfig.height_cropped
             and dh > 0
@@ -43,6 +44,7 @@ class PathPlanning:
         for element in self.dist_dir:
             dw = CarConst.pos_w
             dh = CarConst.pos_h
+            element.dist = 1
 
             while (
                 # dw and dh must remain inside the boundaries of the image
@@ -66,11 +68,31 @@ class PathPlanning:
         # i = image * 255
         # show_plt_img_grey(i)
 
-        lv = self.front
+        #lv = self.front
 
         # get longest vector
-        for element in self.dist_dir:
-            if element.dist > lv.dist:
-                lv = element
+        #for element in self.dist_dir:
+        #    if element.dist > lv.dist:
+        #        lv = element
 
-        return self.front.dist, lv.get_vector()
+        # interpolate direction by adding all three vectors
+        #interpolated_dir = self.front.get_vector()
+        #for element in self.dist_dir:
+        #    np.add(interpolated_dir, element.get_vector())
+
+        interpolated_dir = self.front.get_vector()
+        longest_vector = None
+        longest_distance = 0
+        for element in self.dist_dir:
+            if element.dist > longest_distance:
+                longest_distance = element.dist
+                longest_vector = element
+
+        print("distances", [self.front.dist, self.dist_dir[0].dist, self.dist_dir[1].dist])
+        print("intpltd", interpolated_dir)
+        print("longest", longest_vector)
+        #return self.front.dist, lv.get_vector()
+        print("add",interpolated_dir)
+        print("rechts",self.dist_dir)
+        return self.front.dist, interpolated_dir, self.dist_dir[0],
+

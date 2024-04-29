@@ -11,9 +11,9 @@ class LateralControl:
     def control(self, front: float, longest_vector: np.ndarray, speed: float) -> list:
         # Berechnen des Winkels
 
-        angle = angle_of_vectors(longest_vector, FRONT_DIRECTION)
-        print(longest_vector)
-        #print(angle)
+        angle = angle_of_vectors(longest_vector, FRONT_DIRECTION) -90
+        #print(longest_vector)
+        print(angle)
 
 
 
@@ -30,8 +30,9 @@ class LateralControl:
         # Normalisieren des Lenkwinkels
         steering_angle = np.clip(steering_angle, -1, 1)
 
+
         #konst speed
-        speed = 0.05
+        speed = 0.02
 
         # Geschwindigkeit beibehalten, kein Bremsen
         return [steering_angle, speed, 0]
