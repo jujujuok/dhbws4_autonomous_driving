@@ -3,6 +3,7 @@ import numpy as np
 
 FRONT_DIRECTION = np.array([-1, 0])
 
+
 @dataclass
 class ImageConfig:
     displaycrop: int = 14
@@ -15,6 +16,7 @@ class ImageConfig:
 class ConfigLaneDetection:
     evaluate: bool = False
     debug: bool = False
+
 
 @dataclass
 class RLConfig:  # ReinforcementLearning
@@ -48,27 +50,29 @@ class RLAction:
     - gas, 0 is no gas, 1 is full gas
     - breaking, 0 is no break, 1 is full break
     """
+
     steering: float = 0  # [-1:1]
     acceleration: float = 0  # [-1:1] -> gas:[0,1]; breaking: [-1,0]
     action_size: int = 2
 
 
-
-
-@dataclass
 class State:
-    speed: float
-    left: DistDir
-    right: DistDir
-    front: DistDir
-    # front_left: DistDir
-    # front_right: DistDir
+    def __init__(self):
+        self.speed: float  # todo: needed?
+        self.left: DistDir
+        self.right: DistDir
+        self.front: DistDir
+        self.front_left: DistDir
+        self.front_right: DistDir
+
+    def state_list(self) -> list[DistDir]:
+        return [self.left, self.right, self.front_left, self.front_right]
 
 
 @dataclass
 class CarConst:
     pos_w: int = 48
-    pos_h: int = 80
+    pos_h: int = 70
     start_h: int = 65
     end_h: int = 78
     start_w: int = 44
