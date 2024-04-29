@@ -52,7 +52,14 @@ class PathPlanning:
 
         return state
 
-    def plan(self, image: np.ndarray) -> list[float, np.ndarray]:
+    def plan(self, image: np.ndarray) -> np.ndarray:
+        """
+        Args:
+            image (np.ndarray): lanes detected by the LaneDetection class
+
+        Returns:
+            np.ndarray: the longest vector detected by the sensors around the car
+        """
         state = self.sensor_application(image)
 
         lv = state.front
@@ -61,7 +68,7 @@ class PathPlanning:
             if element.dist > lv.dist:
                 lv = element
 
-        return state.front.dist, lv.get_vector()
+        return lv.get_vector()
     
     def get_state(self, image)->State:
         return self.sensor_application(image)

@@ -12,9 +12,11 @@ from lateral_control import LateralControl
 from path_planning import PathPlanning
 from lane_detection import LaneDetection
 from structs_and_configs import CarConst
+from time import time
 
 
 def run(env, input_controller: InputController):
+    t = time()
     lateral_control = LateralControl()
     path_planning = PathPlanning()
     lane_detection = LaneDetection()
@@ -24,12 +26,23 @@ def run(env, input_controller: InputController):
     total_reward = 0.0
 
     while not input_controller.quit:
+        if t < 3:
+            continue
 
         image = lane_detection.detect(state_image)
 
-        state = path_planning.get_state(image)
+        longest_vector = path_planning.plan(image)
 
-        front = state.front.get_vector()
+        angle = 0
+        
+        if longest_vector[0] != 0 and longest_vector[1] != 0:
+
+            print(f"longest vector: {longest_vector}")
+
+            angle = lateral_control.control(longest_vector)
+
+        # state = path_planning.get_state(image)
+        # front = state.front.get_vector()
 
         # -----------
 
@@ -39,16 +52,13 @@ def run(env, input_controller: InputController):
 
         cv_image = cv2.cvtColor(cv_image, cv2.COLOR_RGB2BGR)
 
-        for vec in [state.front]:
+        # for vec in [state.front]:
+        #     pos = (CarConst.pos_h, CarConst.pos_w)
+        #     end_w = CarConst.pos_w + vec.w
+        #     end_h = CarConst.pos_h + vec.h
+        #     cv_image = cv2.line(cv_image, pos, (end_h, end_w), [255, 0, 0], 1)
 
-            pos = (CarConst.pos_h, CarConst.pos_w)
-
-            end_w = CarConst.pos_w + vec.w 
-            end_h = CarConst.pos_h + vec.h
-
-            cv_image = cv2.line(cv_image, pos, (end_h, end_w), [255, 0, 0], 1)
-
-            cv_image = cv2.resize(cv_image, (cv_image.shape[1] * 6, cv_image.shape[0] * 6))
+        cv_image = cv2.resize(cv_image, (cv_image.shape[1] * 6, cv_image.shape[0] * 6))
 
         cv2.imshow("Car Racing - Lateral Control", cv_image)
         cv2.waitKey(1)
@@ -57,7 +67,7 @@ def run(env, input_controller: InputController):
 
         # Step the environment
         input_controller.update()
-        a = [0, input_controller.accelerate, input_controller.brake]
+        a = [angle, input_controller.accelerate, input_controller.brake]
         state_image, r, done, trunc, info = env.step(a)
         total_reward += r
 
