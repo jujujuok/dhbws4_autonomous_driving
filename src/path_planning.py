@@ -1,98 +1,69 @@
 from __future__ import annotations
 import numpy as np
-from structs_and_configs import CarConst, ImageConfig
+from structs_and_configs import CarConst, ImageConfig, DistDir, State
 from helper import show_plt_img_grey, vector_length
-
-
-class DistDir:
-    def __init__(self, label: str, h: int, w: int):
-        self.label = label
-        self.dist: float = 0
-        self.h = h
-        self.w = w
-
-    def get_vector(self) -> np.ndarray:
-        return np.array([self.w, self.h]) * self.dist
-
-    def get_length(self) -> float:
-        return np.linalg.norm(self.get_vector())
-
 
 class PathPlanning:
 
     def __init__(self):
-        self.front = DistDir("front", -1, 0)
-        self.dist_dir = [
-            DistDir("right", 0, 1),
-            DistDir("left", 0, -1),
-        ]
+        self.directions = {
+            'front': DistDir(0, -1),
+            'right': DistDir(1, 0),
+            'left': DistDir(-1, 0),
+            'front_left': DistDir(-1, -1),
+            'front_right': DistDir(1, -1),
+            'front_left_l': DistDir(-1, -2),
+            'front_right_r': DistDir(1, -2),
+        }
 
-    def sensor_application(self, image: np.ndarray):
-        # front
-        dh = CarConst.pos_h
-        self.front.dist = 1
-        while (
-            dh < ImageConfig.height_cropped
-            and dh > 0
-            # find a 1 (= Lane)
-            and image[dh][CarConst.pos_w] != 1
-        ):
-            dh = dh + self.front.h
-            self.front.dist = self.front.dist + 1
+    def sensor_application(self, image: np.ndarray) -> State:
+        if image.shape != (ImageConfig.height_cropped, ImageConfig.width):
+            raise ValueError("Incorrect image dimensions")
 
-        # sides etc
-        for element in self.dist_dir:
-            dw = CarConst.pos_w
-            dh = CarConst.pos_h
-            element.dist = 1
+        state = State()
 
-            while (
-                # dw and dh must remain inside the boundaries of the image
-                dw > 0
-                and dw < ImageConfig.width
-                and dh > 0
-                and dh < ImageConfig.height_cropped
-                # find a 1 (= Lane)
-                and image[dh][dw] != 1
-            ):
-                dh = dh + element.h
-                dw = dw + element.w
-                element.dist = element.dist + 1
 
-                # mark the looked up ways for distances grey
-                # image[dh][dw] = 0.5
+        for key, direction in self.directions.items():
+            setattr(state, key, direction)
+            direction.reset_distance()
 
-    def plan(self, image: np.ndarray) -> list[float, np.ndarray]:
-        self.sensor_application(image)
 
-        # i = image * 255
-        # show_plt_img_grey(i)
+        for key, element in self.directions.items():
+            dw, dh = CarConst.pos_w, CarConst.pos_h
 
-        #lv = self.front
+            while self._within_bounds(dw + element.w, dh + element.h, image):
+                dh += element.h
+                dw += element.w
+                if image[dh][dw] == 1:
+                    break
+                element.dist += 1
 
-        # get longest vector
-        #for element in self.dist_dir:
-        #    if element.dist > lv.dist:
-        #        lv = element
+            #print(f"{key} vector: {element.get_vector()}, length: {element.get_length()}")
 
-        # interpolate direction by adding all three vectors
-        #interpolated_dir = self.front.get_vector()
-        #for element in self.dist_dir:
-        #    np.add(interpolated_dir, element.get_vector())
+        return state
 
-        interpolated_dir = self.front.get_vector()
-        longest_vector = None
-        longest_distance = 0
-        for element in self.dist_dir:
-            if element.dist > longest_distance:
-                longest_distance = element.dist
-                longest_vector = element
+    def _within_bounds(self, dw, dh, image):
+        """Check if coordinates are within image boundaries."""
+        return 0 <= dw < ImageConfig.width and 0 <= dh < ImageConfig.height_cropped
 
-        print("distances", [self.front.dist, self.dist_dir[0].dist, self.dist_dir[1].dist])
-        print("intpltd", interpolated_dir)
-        print("longest", longest_vector)
-        #return self.front.dist, lv.get_vector()
-        print("add",interpolated_dir)
-        print("rechts",self.dist_dir)
-        return self.front.dist, interpolated_dir, self.dist_dir[0],
+    def plan(self, image: np.ndarray) -> tuple[State, np.ndarray]:
+        """
+        Args:
+            image (np.ndarray): lanes detected by the LaneDetection class
+
+        Returns:
+            tuple[State, np.ndarray]: the state and the longest vector detected by the sensors around the car
+        """
+        state = self.sensor_application(image)
+        lv = max(state.state_list(), key=lambda x: x.dist)
+
+        return state, lv.get_vector()
+
+    def get_state(self, image) -> State:
+        """Return the sensor state for a given image."""
+        return self.sensor_application(image)
+
+    def reinforcement_path_planning(self, image: np.ndarray) -> State:
+        """Apply reinforcement learning for path planning."""
+        return self.sensor_application(image)
 
