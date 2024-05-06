@@ -15,8 +15,8 @@ class PathPlanning:
         state.left = DistDir(0, -1)
         state.front_left = DistDir(-1, -1)
         state.front_right = DistDir(-1, 1)
-        state.front_right_r = DistDir(1,-2)
-        state.front_left_l = DistDir(-1,-2)
+        state.front_right_r = DistDir(-2,1)
+        state.front_left_l = DistDir(-2,-1)
 
         dh = CarConst.pos_h
         while (

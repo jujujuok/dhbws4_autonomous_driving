@@ -7,7 +7,15 @@ from structs_and_configs import State
 
 class LateralControl:
 
-    def control(self, longest_vector, state: State) -> float:
+    def __init__(self):
+        self.last_vector: np.ndarray = np.array([-1,0])
+
+    def control(self, longest_vector:np.ndarray, state: State) -> float:
+
+        norm = np.linalg.norm(longest_vector)
+        if np.linalg.norm(self.last_vector) != norm:
+            self.last_vector = longest_vector
+            
 
         if longest_vector[0] == 0 and longest_vector[1] == 0:
             return 0 # drive forwards
