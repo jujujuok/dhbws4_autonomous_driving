@@ -31,6 +31,7 @@ class RLConfig:  # ReinforcementLearning
 
 
 class DistDir:
+
     def __init__(self, w, h):
         self.w = w
         self.h = h
@@ -70,7 +71,9 @@ class State:
         self.front_right: DistDir
 
     def state_list(self) -> list[DistDir]:
+
         return [self.left, self.right, self.front_left, self.front_right, self.front_left_l, self.front_right_r]
+
 
 
 @dataclass

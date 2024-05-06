@@ -12,6 +12,7 @@ from path_planning import PathPlanning
 from lane_detection import LaneDetection
 from structs_and_configs import CarConst
 from time import time
+
 from longitudinal_control import LongitudinalControl
 
 
@@ -22,11 +23,15 @@ def run(env, input_controller: InputController):
     lane_detection = LaneDetection()
     longitudinal_control = LongitudinalControl()
 
+
+
+
     seed = int(np.random.randint(0, int(1e6)))
     state_image, info = env.reset(seed=seed)
     total_reward = 0.0
 
     while not input_controller.quit:
+
         if time() - t_start < 3:
             continue
 
@@ -46,6 +51,8 @@ def run(env, input_controller: InputController):
         # ----------- visualization -----------
 
         cv_image = image * 255
+
+
         cv_image = np.asarray(cv_image, dtype=np.uint8)
 
         cv_image = cv2.cvtColor(cv_image, cv2.COLOR_RGB2BGR)
@@ -66,8 +73,11 @@ def run(env, input_controller: InputController):
                 cv_image = cv2.circle(cv_image, (end_pos_w, end_pos_h), 1, [0, 255, 0], 1)
 
         cv_image = cv2.resize(cv_image, (cv_image.shape[1] * 6, cv_image.shape[0] * 6))
+
         cv2.imshow("Car Racing - Lateral Control", cv_image)
         cv2.waitKey(1)
+        # ------------
+
         # ------------
 
         # Step the environment

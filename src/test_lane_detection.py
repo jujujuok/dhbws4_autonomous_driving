@@ -9,6 +9,7 @@ import numpy as np
 from env_wrapper import CarRacingEnvWrapper
 from input_controller import InputController
 from lane_detection import LaneDetection
+from helper import test_visualize
 
 
 def run(env: CarRacingEnvWrapper, input_controller: InputController):
@@ -19,6 +20,10 @@ def run(env: CarRacingEnvWrapper, input_controller: InputController):
     total_reward = 0.0
 
     while not input_controller.quit:
+        image = lane_detection.detect(state_image)
+
+        test_visualize(image)
+
         lane_detection.detect(state_image)
         
         cv_image = np.asarray(lane_detection.debug_image, dtype=np.uint8)
@@ -29,7 +34,11 @@ def run(env: CarRacingEnvWrapper, input_controller: InputController):
 
         # Step the environment
         input_controller.update()
-        a = [input_controller.steer, input_controller.accelerate, input_controller.brake]
+        a = [
+            input_controller.steer,
+            input_controller.accelerate,
+            input_controller.brake,
+        ]
         state_image, r, done, trunc, info = env.step(a)
         total_reward += r
 
@@ -49,13 +58,15 @@ def main():
     parser.add_argument("--no_display", action="store_true", default=False)
     args = parser.parse_args()
 
-    render_mode = 'rgb_array' if args.no_display else 'human'
-    env = CarRacingEnvWrapper(gym.make("CarRacing-v2", render_mode=render_mode, domain_randomize=False))
+    render_mode = "rgb_array" if args.no_display else "human"
+    env = CarRacingEnvWrapper(
+        gym.make("CarRacing-v2", render_mode=render_mode, domain_randomize=False)
+    )
     input_controller = InputController()
 
     run(env, input_controller)
     env.reset()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

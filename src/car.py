@@ -28,11 +28,6 @@ class Car:
                 1: gas, 0 is no gas, 1 is full gas
                 2: breaking, 0 is no break, 1 is full break
         """
-        # left_lane_boundaries, right_lane_boundaries = self._lane_detection.detect(observation)
-        # trajectory, curvature = self._path_planning.plan(left_lane_boundaries, right_lane_boundaries)
-        # steering_angle = self._lateral_control.control(trajectory, info['speed'])
-        # target_speed = self._longitudinal_control.predict_target_speed(curvature)
-        # acceleration, braking = self._longitudinal_control.control(info['speed'], target_speed, steering_angle)
 
         # Führen Sie die Fahrspurerkennung durch
         lanes = self._lane_detection.detect(observation)
@@ -40,11 +35,13 @@ class Car:
         # Führen Sie die Pfadplanung durch, um die Richtung und die längste erkannte Linie zu erhalten
         front, longest_vector = self._path_planning.plan(lanes)
 
+
         # Rufen Sie die longitudinale Steuerung auf, um Beschleunigung und Bremsen zu bestimmen
         acceleration, braking = self._longitudinal_control(front, longest_vector)
 
         # Rufen Sie die laterale Steuerung auf, um den Lenkwinkel zu bestimmen
         steering_angle = self._lateral_control(front, longest_vector)
+
 
         # Erstellen Sie eine Liste mit den Aktionen (Lenkung, Beschleunigung und Bremsen)
         action = [steering_angle, acceleration, braking]

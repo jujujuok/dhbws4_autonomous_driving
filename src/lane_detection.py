@@ -35,6 +35,9 @@ class LaneDetection:
         plt.show()
 
         return images["scipy"]
+    
+    def reinforcement_lane_detection(self, image) -> np.ndarray:
+        return detect_green_pixels(image, threshold=50)
 
     def detect_lanes(self, image: np.ndarray) -> np.ndarray:
         # crop info display
@@ -59,9 +62,6 @@ class LaneDetection:
 
         # segment left/right lane
         # image = self.lane_clustering(image, 50)
-
-        if self.debug:
-            self.debug_image = image * 255
 
         return image
 
@@ -136,18 +136,20 @@ class LaneDetection:
 
 
 if __name__ == "__main__":
-    if ConfigLaneDetection.debug:
 
-        from path_planning import PathPlanning
+    from path_planning import PathPlanning
 
-        ld = LaneDetection()
-        pp = PathPlanning()
+    ld = LaneDetection()
+    pp = PathPlanning()
 
-        # i = Image.open("/home/juju/dev/dhbws4_autonomous_driving/src/img/image.jpg")
-        i = Image.open("/home/juju/dev/dhbws4_autonomous_driving/test/img0.jpg")
+    # i = Image.open("/home/juju/dev/dhbws4_autonomous_driving/src/img/image.jpg")
+    i = Image.open("/home/juju/dev/dhbws4_autonomous_driving/test/img0.jpg")
 
-        lanes = ld.detect(np.array(i))
-        print(pp.plan(lanes))
+    lanes = ld.detect(np.array(i))
+    from helper import test_visualize
+    test_visualize(lanes)
+
+    print(pp.plan(lanes))
 
 
 """
