@@ -30,11 +30,12 @@ class Car:
         """
 
         lanes = self._lane_detection.detect(observation)
-        front, longest_vector = self._path_planning.plan(lanes)
+        state, longest_vector = self._path_planning.plan(lanes)
          
-        acceleration, braking = self._longitudinal_control.control(front, longest_vector, info['speed'])
-        steering_angle = self._lateral_control.control(front, longest_vector, info['speed'])
+        steering_angle = self._lateral_control.control(longest_vector, state)
 
-        action = [steering_angle, acceleration, braking]
+        #acceleration, braking = self._longitudinal_control.control(state.front.dist, longest_vector, info['speed'])
+
+        action = [steering_angle, 0, 0]
 
         return action
