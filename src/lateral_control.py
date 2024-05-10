@@ -11,13 +11,17 @@ class LateralControl:
 
         if longest_vector[0] == 0 and longest_vector[1] == 0:
             return 0 # drive forwards
-                
-        print(f"longest vector: {longest_vector}")
-        
+
+        if longest_vector[1] > 0:
+            longest_vector[1] += 15
+        elif longest_vector[1] < 0:
+            longest_vector[1] -= 15
+
         angle = angle_of_vectors(longest_vector, np.array([0, -1]))
-
-        angle = (angle - 90) / 90
-
-        print(f"Angle: {angle}")
-
+        angle = ((angle - 90) / 90) * 1.7
         return angle
+
+
+
+
+

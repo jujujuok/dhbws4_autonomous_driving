@@ -26,8 +26,7 @@ class PathPlanning:
             dh = dh + state.front.h
             state.front.dist = state.front.dist + 1
 
-
-        print(f"\n\nfront: {state.front.get_vector()}, \t length: {state.front.get_length()}")
+        #print(f"\n\nfront: {state.front.get_vector()}, \t length: {state.front.get_length()}")
 
         for element in state.state_list():
             dw = CarConst.pos_w
@@ -48,7 +47,7 @@ class PathPlanning:
 
                 # mark the looked up ways for distances grey
                 # image[dh][dw] = 0.5
-            print(f"vector: {element.get_vector()} , \t length: {element.get_length()}")
+            #print(f"vector: {element.get_vector()} , \t length: {element.get_length()}")
 
         return state
 
