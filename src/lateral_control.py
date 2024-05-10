@@ -10,12 +10,12 @@ class LateralControl:
     def control(self, longest_vector, state: State) -> float:
 
         if longest_vector[0] == 0 and longest_vector[1] == 0:
-            return 0 # drive forwards
+               return 0 # drive forwards
 
         if longest_vector[1] > 0:
-            longest_vector[1] += 9
+            longest_vector[1] += 15
         elif longest_vector[1] < 0:
-            longest_vector[1] -= 9
+            longest_vector[1] -= 15
 
         angle = angle_of_vectors(longest_vector, np.array([0, -1]))
         angle = ((angle - 90) / 90) *1.5
