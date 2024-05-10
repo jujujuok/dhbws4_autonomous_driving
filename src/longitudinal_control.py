@@ -34,10 +34,10 @@ class LongitudinalControl:
         return acceleration, braking
 
     def predict_target_speed(self, angle: float, magnitude: float) -> float:
-        base_speed = 39
-        speed_adjustment = 2 * np.cos(angle)
+        base_speed = 40
+        speed_adjustment =np.cos(angle)
         #print("speed_adjustment",speed_adjustment)
         magnitude_factor = 0.1 * magnitude
-        magnitude_factor2 = -0.8 * (magnitude_factor - magnitude)/ 5
+        magnitude_factor2 = -0.8 * (magnitude_factor - magnitude)/ 4
         #print("magnitude_factor2",magnitude_factor2)
-        return max(10, base_speed + speed_adjustment + magnitude_factor + magnitude_factor2)
+        return max(10, base_speed  + magnitude_factor + magnitude_factor2+speed_adjustment)
