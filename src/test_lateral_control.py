@@ -34,14 +34,6 @@ def run(env, input_controller: InputController):
 
         state, longest_vector = path_planning.plan(image)
 
-        front = state.front.get_vector()
-
-        angle_between = np.arccos(
-            np.dot(longest_vector, front) / (np.linalg.norm(longest_vector) * np.linalg.norm(front)))
-        magnitude_of_front = np.linalg.norm(front)
-
-        target_speed = longitudinal_control.predict_target_speed(angle_between, magnitude_of_front) / 2
-
         angle = lateral_control.control(longest_vector, state)
         # ----------- visualization -----------
 

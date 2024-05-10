@@ -64,9 +64,11 @@ class State:
         self.front: DistDir
         self.front_left: DistDir
         self.front_right: DistDir
+        self.front_right_r: DistDir
+        self.front_left_l: DistDir
 
     def state_list(self) -> list[DistDir]:
-        return [self.left, self.right, self.front_left, self.front_right]
+        return [self.left, self.right, self.front_left, self.front_right, self.front_left_l, self.front_right_r]
 
 
 @dataclass
