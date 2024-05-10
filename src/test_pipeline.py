@@ -1,67 +1,70 @@
 from __future__ import annotations
 
 import argparse
-
 import cv2
 import gymnasium as gym
 import numpy as np
-from matplotlib import pyplot as plt
-
+from structs_and_configs import CarConst, ImageConfig, DistDir, State
 from env_wrapper import CarRacingEnvWrapper
 from input_controller import InputController
-from lane_detection import LaneDetection
 from lateral_control import LateralControl
-from longitudinal_control import LongitudinalControl
 from path_planning import PathPlanning
+from lane_detection import LaneDetection
+from structs_and_configs import CarConst
+from time import time
+from longitudinal_control import LongitudinalControl
 
 
 def run(env, input_controller: InputController):
-    lane_detection = LaneDetection()
-    path_planning = PathPlanning()
+
+    # currently at the state of lateral control
+
     lateral_control = LateralControl()
+    path_planning = PathPlanning()
+    lane_detection = LaneDetection()
     longitudinal_control = LongitudinalControl()
 
     seed = int(np.random.randint(0, int(1e6)))
     state_image, info = env.reset(seed=seed)
     total_reward = 0.0
 
-    fig = plt.figure()
-    plt.ion()
-    plt.show()
-    speed_history = []
-    target_speed_history = []
-
     while not input_controller.quit:
-        left_lane_boundaries, right_lane_boundaries = lane_detection.detect(state_image)
-        trajectory, curvature = path_planning.plan(left_lane_boundaries, right_lane_boundaries)
-        steering_angle = lateral_control.control(trajectory, info['speed'])
-        target_speed = longitudinal_control.predict_target_speed(curvature)
-        acceleration, braking = longitudinal_control.control(info['speed'], target_speed, steering_angle)
 
-        speed_history.append(info['speed'])
-        target_speed_history.append(target_speed)
+        image = lane_detection.detect(state_image)
 
-        cv_image = np.asarray(lane_detection.debug_image, dtype=np.uint8)
-        for point in trajectory:
-            if 0 < point[0] < 96 and 0 < point[1] < 84:
-                cv_image[int(point[1]), int(point[0])] = [255, 255, 255]
+        state, longest_vector = path_planning.plan(image)
 
-            cv_image = cv2.cvtColor(cv_image, cv2.COLOR_RGB2BGR)
-            cv_image = cv2.resize(cv_image, (cv_image.shape[1] * 6, cv_image.shape[0] * 6))
-            cv2.imshow('Car Racing - Pipeline', cv_image)
-            cv2.waitKey(1)
+        angle = lateral_control.control(longest_vector, state)
+        # ----------- visualization -----------
 
-            # Longitudinal control plot
-            plt.gcf().clear()
-            plt.plot(speed_history, c="green")
-            plt.plot(target_speed_history)
-            try:
-                fig.canvas.flush_events()
-            except:
-                pass
+        cv_image = image * 255
+        cv_image = np.asarray(cv_image, dtype=np.uint8)
+
+        cv_image = cv2.cvtColor(cv_image, cv2.COLOR_RGB2BGR)
+
+        # Starting position for vectors, adjust as needed
+        base_pos_w, base_pos_h = CarConst.pos_w, CarConst.pos_h
+
+        # Draw each vector from the 'state' object
+        for attr_name in dir(state):
+            if not attr_name.startswith('__') and isinstance(getattr(state, attr_name), DistDir):
+                vec = getattr(state, attr_name)
+                # Calculate end position for each vector
+                end_pos_w = base_pos_w + vec.w * vec.dist
+                end_pos_h = base_pos_h + vec.h * vec.dist
+                # Draw line
+                cv_image = cv2.line(cv_image, (base_pos_w, base_pos_h), (end_pos_w, end_pos_h), [255, 0, 0], 1)
+                # Draw circle at the end of the vector
+                cv_image = cv2.circle(cv_image, (end_pos_w, end_pos_h), 1, [0, 255, 0], 1)
+
+        cv_image = cv2.resize(cv_image, (cv_image.shape[1] * 6, cv_image.shape[0] * 6))
+        cv2.imshow("Car Racing - Lateral Control", cv_image)
+        cv2.waitKey(1)
+        # ------------
 
         # Step the environment
-        a = [steering_angle, acceleration, braking]
+        input_controller.update()
+        a = [angle, input_controller.accelerate, input_controller.brake]
         state_image, r, done, trunc, info = env.step(a)
         total_reward += r
 
@@ -75,22 +78,21 @@ def run(env, input_controller: InputController):
             state_image, info = env.reset(seed=seed)
             total_reward = 0.0
 
-            speed_history = []
-            target_speed_history = []
-
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--no_display", action="store_true", default=False)
     args = parser.parse_args()
 
-    render_mode = 'rgb_array' if args.no_display else 'human'
-    env = CarRacingEnvWrapper(gym.make("CarRacing-v2", render_mode=render_mode, domain_randomize=False))
+    render_mode = "rgb_array" if args.no_display else "human"
+    env = CarRacingEnvWrapper(
+        gym.make("CarRacing-v2", render_mode=render_mode, domain_randomize=False)
+    )
     input_controller = InputController()
 
     run(env, input_controller)
     env.reset()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
