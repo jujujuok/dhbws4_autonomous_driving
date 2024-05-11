@@ -48,3 +48,6 @@ class LongitudinalControl:
         magnitude_factor2 = -1 * (magnitude_factor - magnitude) / 6
         # Geschwindigkeitsberechnung kombiniert
         return max(10, base_speed + magnitude_factor + magnitude_factor2 + speed_adjustment)
+
+        # Falls etwas agresiver gefahren werden soll, kann aber aß der Kurve Fliegen
+        #return max(10, base_speed + magnitude_factor + magnitude_factor2 + speed_adjustment) * 1.18
