@@ -9,7 +9,7 @@ from path_planning import PathPlanning
 
 class Car:
     def __init__(self):
-        # Initialize all necessary components for the car.
+        # Initzialisierung aller notwendigen Objekte
         self._lane_detection = LaneDetection()
         self._path_planning = PathPlanning()
         self._lateral_control = LateralControl()
