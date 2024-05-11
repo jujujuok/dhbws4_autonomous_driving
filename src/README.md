@@ -1,5 +1,11 @@
 # Abschlussprojekt: Autonomer Rennwagen
 
+```
+Matrikelnumme: 3222108
+Matrikelnumme: 
+
+```
+
 Dieses "Framework" enthält eine grundlegende Struktur für die Umsetzung einer modularen Pipeline für die Gymnasium Car Racing Simulation ([link](https://gymnasium.farama.org/environments/box2d/car_racing/)).
 
 ## 0. Requirements
@@ -49,18 +55,68 @@ working-dir/
 | - main.py # Hauptdatei, die die Pipeline über 5 Iterationen ausführt
 | - path_planning.py # Modul zur Pfadplanung
 | - README.md # Diese Datei
-| - test_installation.py # Testet die Installation
-| - test_lane_detection.py # Testet die Spurerkennung
-| - test_lateral_control.py # Testet die Querregelung
-| - test_longitudinal_control.py # Testet die Längsregelung
-| - test_path_planning.py # Testet die Pfadplanung
-| - test_pipeline.py # Testet die gesamte Pipeline
+```
+### 2.1 Datei car.py
+```python
+In der Datei car.py ist die Car Klasse definirt, welche die Entscheidungsfindung eines autonomen 
+Fahrzeugs, indem sie Sensorbeobachtungen (Mittels Vektroren)verarbeitet und Fahrentscheidungen trifft. 
+Dabei sind unteranderen die Spurerkennung, Pfadplanung sowie Lateral- und 
+Längsregelung, um Lenkwinkel, Beschleunigung und Bremsung zu berechnen.
 ```
 
+### 2.2 Datei lane_detection.py
+```python
+
+Die Klasse LaneDetection ist für die Erkennung der  Fahrspuren in Bildern
+eines autonomen Fahrzeugs zuständig. 
+
+Diese Methode 'detect_lanes' nimmt ein Bild als Eingabe und führt eine Vorverarbeitung durch, indem sie das Bild 
+beschneidet, um Teile der Anzeige zu entfernen. Anschließend wird die Kantenerkennung auf das Bild angewendet. 
+Hierbei wird zwischen einer Standardkantendetektion und einer umfassenderen Evaluationsdetektion unterschieden, 
+basierend auf dem evaluate-Flag. Es wird eine Binärisierung durchgeführt, um die Kanten hervorzuheben (image > 70).
+Abschließend wird ein Bereich des Bildes maskiert, um das eigene Fahrzeug auszublenden und so die Verarbeitung 
+zu vereinfachen (CarConst).
+
+Diese Methode 'lane_clustering' segmentiert die erkannten Linien weiter in Cluster, basierend auf ihrer räumlichen 
+Nähe und einer Mindestanzahl von Punkten (min_points). Es wird ein rekursiver Ansatz verwendet, um benachbarte Punkte 
+zu finden und diesen Clustern zuzuordnen. Die Cluster werden nummeriert, um unterschiedliche Spurlinien zu 
+identifizieren und von einander zu unterscheiden.
+```
+
+### 2.2 Datei path_planning.py
+```python
+
+Die Klasse PathPlanning ist für die Pfadplanung/ -bestimmung für ein autonomes Fahrzeugsystem zuständig. 
+
+Diese Methode 'sensor_application' verwendet ein Bild um die Abstände und Richtungen zu potenziellen 
+Hindernissen oder Fahrspurlinien in verschiedenen Richtungen relativ zur aktuellen Position des 
+Fahrzeugs zu bestimmen. Dabei werden Unterschiedliche Vektroen definiert, um die Umgebung des 
+gesamten fahrzeug zu erkennen. 
+
+In der Methode 'plan' wird der längste Vektor berehcnte, welche im späteren Verlauf eine 
+entscheidenen Rolle für die Querregelung ist. 
+```
+
+### 2.3 Datei lateral_control.py
+```python
+In dieser Klasse wid mittles dem lägsten Vektor der Winkel zwischen der 
+Fahrtrichtung und dem Richtungsvektor des Farhzeuges berechnet. Dabei Zeigt der längste Vektro, wo 
+das Fahrzeug hinfahren soll.
+```
+
+
+### 2.3 Datei longitudinal_control.py
+```python
+In dieser Klasse wid mittles einem PID-Regeler die Längsregelung des Fahrzeuges gesteuert. Dabei wird 
+die Zeilgeschwindigkeit mit unterscheidlicher Mathematik berechnet. 
+```
+
+
 ## 3. Ausführung
+1. In dern Ordner ../src navigieren 
+2. Venv umgebung starten 
+2. In Der Konsole  `python main.py` ausführen 
 
-Die test Dateien können mit `python <test-file>.py` ausgeführt werden. Die Simulation wird sich öffnen und das Fahrzeug wird sich entsprechend der Pipeline bewegen. Um das Endergebnis zu simulieren, kann die `main.py` Datei ausgeführt werden. Sie führt die Pipeline über 5 Iterationen aus und berechnet den durchschnittlichen Score.
+Die Simulation wird sich öffnen und das Fahrzeug wird sich entsprechend 
+der Pipeline bewegen. 
 
-## 4. Hinweise
-
-Die Dateien `main.py`, `env_wrapper.py` und `input_controller.py` dürfen nicht verändert werden, damit die Ergebnisse vergleichbar bleiben. Alle anderen Dateien können beliebig verändert werden.
