@@ -58,16 +58,16 @@ working-dir/
 ```
 ### 2.1 Datei car.py
 ```python
-In der Datei car.py ist die Car Klasse definirt, welche die Entscheidungsfindung eines autonomen 
-Fahrzeugs, indem sie Sensorbeobachtungen (Mittels Vektroren)verarbeitet und Fahrentscheidungen trifft. 
-Dabei sind unteranderen die Spurerkennung, Pfadplanung sowie Lateral- und 
+In der Datei car.py ist die Car-Klasse definiert, welche die Entscheidungsfindung eines autonomen 
+Fahrzeugs übernimmt, indem sie Sensorbeobachtungen (mittels Vektoren) verarbeitet und Fahrentscheidungen trifft.
+Dabei sind unter anderem die Spurerkennung, Pfadplanung sowie Lateral- und 
 Längsregelung, um Lenkwinkel, Beschleunigung und Bremsung zu berechnen.
 ```
 
 ### 2.2 Datei lane_detection.py
 ```python
 
-Die Klasse LaneDetection ist für die Erkennung der  Fahrspuren in Bildern
+Die Klasse LaneDetection ist für die Erkennung der Fahrspuren in Bildern
 eines autonomen Fahrzeugs zuständig. 
 
 Diese Methode 'detect_lanes' nimmt ein Bild als Eingabe und führt eine Vorverarbeitung durch, indem sie das Bild 
@@ -81,34 +81,37 @@ Diese Methode 'lane_clustering' segmentiert die erkannten Linien weiter in Clust
 Nähe und einer Mindestanzahl von Punkten (min_points). Es wird ein rekursiver Ansatz verwendet, um benachbarte Punkte 
 zu finden und diesen Clustern zuzuordnen. Die Cluster werden nummeriert, um unterschiedliche Spurlinien zu 
 identifizieren und von einander zu unterscheiden.
+
 ```
 
 ### 2.2 Datei path_planning.py
 ```python
 
-Die Klasse PathPlanning ist für die Pfadplanung/ -bestimmung für ein autonomes Fahrzeugsystem zuständig. 
+Die Klasse PathPlanning ist für die Pfadplanung/-bestimmung für ein autonomes Fahrzeugsystem zuständig. 
 
-Diese Methode 'sensor_application' verwendet ein Bild um die Abstände und Richtungen zu potenziellen 
+Diese Methode 'sensor_application' verwendet ein Bild, um die Abstände und Richtungen zu potenziellen 
 Hindernissen oder Fahrspurlinien in verschiedenen Richtungen relativ zur aktuellen Position des 
-Fahrzeugs zu bestimmen. Dabei werden Unterschiedliche Vektroen definiert, um die Umgebung des 
-gesamten fahrzeug zu erkennen. 
+Fahrzeugs zu bestimmen. Dabei werden unterschiedliche Vektoren definiert, um die Umgebung des 
+gesamten Fahrzeugs zu erkennen. 
 
-In der Methode 'plan' wird der längste Vektor berehcnte, welche im späteren Verlauf eine 
-entscheidenen Rolle für die Querregelung ist. 
+In der Methode 'plan' wird der längste Vektor berechnet, welcher im späteren Verlauf eine 
+entscheidende Rolle für die Querregelung ist. 
+
 ```
 
 ### 2.3 Datei lateral_control.py
 ```python
-In dieser Klasse wid mittles dem lägsten Vektor der Winkel zwischen der 
-Fahrtrichtung und dem Richtungsvektor des Farhzeuges berechnet. Dabei Zeigt der längste Vektro, wo 
+In dieser Klasse wird mittels dem längsten Vektor der Winkel zwischen der 
+Fahrtrichtung und dem Richtungsvektor des Fahrzeugs berechnet. Dabei zeigt der längste Vektor, wo 
 das Fahrzeug hinfahren soll.
+
 ```
 
 
 ### 2.3 Datei longitudinal_control.py
 ```python
-In dieser Klasse wid mittles einem PID-Regeler die Längsregelung des Fahrzeuges gesteuert. Dabei wird 
-die Zeilgeschwindigkeit mit unterscheidlicher Mathematik berechnet. 
+In dieser Klasse wird mittels einem PID-Regler die Längsregelung des Fahrzeuges gesteuert. Dabei wird 
+die Zielgeschwindigkeit mit unterschiedlicher Mathematik berechnet. 
 ```
 
 
