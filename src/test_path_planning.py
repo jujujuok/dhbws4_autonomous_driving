@@ -29,9 +29,9 @@ def run(env, input_controller: InputController):
 
         test_visualize(image)
 
-        front_distance, longest_vector = path_planning.plan(image)
+        state, longest_vector = path_planning.plan(image)
 
-        print(f"distance front: {front_distance}, longest_vector: {longest_vector}")
+        print(f"distance front: {state.front.dist}, longest_vector: {longest_vector}")
 
         # visualize
 

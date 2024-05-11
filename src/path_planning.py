@@ -1,8 +1,8 @@
 from __future__ import annotations
 import numpy as np
 from structs_and_configs import CarConst, ImageConfig, DistDir, State
-from helper import show_plt_img_grey, vector_length
 
+DEBUG = False
 
 class PathPlanning:
 
@@ -15,6 +15,8 @@ class PathPlanning:
         state.left = DistDir(0, -1)
         state.front_left = DistDir(-1, -1)
         state.front_right = DistDir(-1, 1)
+        state.front_right_r = DistDir(-2,1)
+        state.front_left_l = DistDir(-2,-1)
 
         dh = CarConst.pos_h
         while (
@@ -27,6 +29,10 @@ class PathPlanning:
             state.front.dist = state.front.dist + 1
 
         #print(f"\n\nfront: {state.front.get_vector()}, \t length: {state.front.get_length()}")
+
+        if DEBUG:
+            print(f"\n\nfront: {state.front.get_vector()}, \t length: {state.front.get_length()}")
+
 
         for element in state.state_list():
             dw = CarConst.pos_w
@@ -47,7 +53,12 @@ class PathPlanning:
 
                 # mark the looked up ways for distances grey
                 # image[dh][dw] = 0.5
+
             #print(f"vector: {element.get_vector()} , \t length: {element.get_length()}")
+
+            if DEBUG:
+                print(f"vector: {element.get_vector()} , \t length: {element.get_length()}")
+
 
         return state
 
