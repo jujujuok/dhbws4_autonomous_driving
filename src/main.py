@@ -3,51 +3,47 @@ from __future__ import annotations
 import argparse
 
 import gymnasium as gym
-import numpy as np
 
+import numpy as np
 from car import Car
 from env_wrapper import CarRacingEnvWrapper
 
+import multiprocessing as multi
 
-def evaluate(env, eval_runs=50, eval_length=600):
 
-    episode_rewards = []
-    for episode in range(eval_runs):
+def evaluate(env, seed, eval_length=600):
+    state_image, info = env.reset(seed=seed)
 
-        seed = int(np.random.randint(0, int(1e6)))
-        state_image, info = env.reset(seed=seed)
+    car = Car()
 
-        car = Car()
+    reward = 0
+    for t in range(eval_length):
+        action = car.next_action(state_image, info)
 
-        episode_rewards.append(0.0)
-        for t in range(eval_length):
+        state_image, r, done, trunc, info = env.step(action)
+        reward += r
 
-            action = car.next_action(state_image, info)
+        if done or trunc:
+            print(f'seed: {seed}, reward: {reward}');
+            return reward
 
-            state_image, r, done, trunc, info = env.step(action)
-            episode_rewards[-1] += r
 
-            if done or trunc:
-                break
+def start(args):
+    cli, seed = args
 
-        print(
-            f"episode: {episode:02d}     "
-            f"seed: {seed:06d}     "
-            f"reward: {episode_rewards[-1]:06.2F}     "
-            f"avg 5 reward: {np.mean(np.asarray(episode_rewards[-5:])):06.2f}     "
-            f"avg reward: {np.mean(np.asarray(episode_rewards)):06.2f}     "
+    render_mode = 'rgb_array' if cli.no_display else 'human'
+    env = CarRacingEnvWrapper(
+        gym.make(
+            "CarRacing-v2", 
+            render_mode=render_mode, 
+            domain_randomize=cli.domain_randomize
         )
+    )
 
-    print("---------------------------")
-    print(" avg score: %f" % (np.mean(np.asarray(episode_rewards))))
-    print(" std diff:  %f" % (np.std(np.asarray(episode_rewards))))
-    print(" max score: %f" % (np.max(np.asarray(episode_rewards))))
-    print(" min score: %f" % (np.min(np.asarray(episode_rewards))))
-    print("---------------------------")
-    print(" top 5 avg score: %f" % (np.mean(np.sort(np.asarray(episode_rewards))[-5:])))
-    print(" low 5 avg score: %f" % (np.mean(np.sort(np.asarray(episode_rewards))[:5])))
-    print("---------------------------")
+    reward = evaluate(env, seed, eval_length=1000)
 
+    env.reset()
+    return reward
 
 def main():
     parser = argparse.ArgumentParser()
@@ -55,19 +51,31 @@ def main():
     parser.add_argument("--domain_randomize", action="store_true", default=False)
     args = parser.parse_args()
 
-    render_mode = "rgb_array" if args.no_display else "human"
-    env = CarRacingEnvWrapper(
-        gym.make(
-            "CarRacing-v2",
-            render_mode=render_mode,
-            domain_randomize=args.domain_randomize,
-        )
-    )
+    episodes = 50
+    parameters = []
 
-    evaluate(env, eval_length=1000)
+    for i in range(episodes):
+        seed = int(np.random.randint(0, int(1e6)))
+        parameters.append((args, seed))
 
-    env.reset()
+    parallel = multi.cpu_count() - 1    # one less to keep the system responsive
+    rewards = []
 
+    with multi.Pool(parallel) as p:
+        rewards += p.map(start, parameters)
+
+    print(rewards)
+    rewards = np.array(rewards)
+
+    print('---------------------------')
+    print(' avg score: %f' % (np.mean(np.asarray(rewards))))
+    print(' std diff:  %f' % (np.std(np.asarray(rewards))))
+    print(' max score: %f' % (np.max(np.asarray(rewards))))
+    print(' min score: %f' % (np.min(np.asarray(rewards))))
+    print('---------------------------')
+    print(' top 5 avg score: %f' % (np.mean(np.sort(np.asarray(rewards))[-5:])))
+    print(' low 5 avg score: %f' % (np.mean(np.sort(np.asarray(rewards))[:5])))
+    print('---------------------------')
 
 if __name__ == "__main__":
     main()
