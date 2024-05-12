@@ -47,27 +47,30 @@ def run(env, input_controller: InputController):
         angle = lateral_control.control(longest_vector, state)
         front = state.front.get_vector()
 
-        print(
-            "longest_vector", longest_vector,
-            "angle", angle,
-            "front", front
-        )
+        print("longest_vector", longest_vector, "angle", angle, "front", front)
 
         cv_image = image * 255
         cv_image = np.asarray(cv_image, dtype=np.uint8)
         cv_image = cv2.cvtColor(cv_image, cv2.COLOR_RGB2BGR)
 
         angle_between = np.arccos(
-            np.dot(longest_vector, front) / (np.linalg.norm(longest_vector) * np.linalg.norm(front)))
+            np.dot(longest_vector, front)
+            / (np.linalg.norm(longest_vector) * np.linalg.norm(front))
+        )
         magnitude_of_front = np.linalg.norm(front)
 
-        target_speed = longitudinal_control.predict_target_speed(angle_between, magnitude_of_front) * 0.8
+        target_speed = (
+            longitudinal_control.predict_target_speed(angle_between, magnitude_of_front)
+            * 0.8
+        )
 
         angle = lateral_control.control(longest_vector, state)
 
-        acceleration, braking = longitudinal_control.control(info['speed'], target_speed, input_controller.steer)
+        acceleration, braking = longitudinal_control.control(
+            info["speed"], target_speed, input_controller.steer
+        )
 
-        speed_history.append(info['speed'])
+        speed_history.append(info["speed"])
         target_speed_history.append(target_speed)
 
         plt.gcf().clear()
@@ -101,13 +104,15 @@ def main():
     parser.add_argument("--no_display", action="store_true", default=False)
     args = parser.parse_args()
 
-    render_mode = 'rgb_array' if args.no_display else 'human'
-    env = CarRacingEnvWrapper(gym.make("CarRacing-v2", render_mode=render_mode, domain_randomize=False))
+    render_mode = "rgb_array" if args.no_display else "human"
+    env = CarRacingEnvWrapper(
+        gym.make("CarRacing-v2", render_mode=render_mode, domain_randomize=False)
+    )
     input_controller = InputController()
 
     run(env, input_controller)
     env.reset()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

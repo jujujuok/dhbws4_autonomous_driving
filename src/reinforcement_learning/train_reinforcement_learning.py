@@ -34,38 +34,43 @@ def run(env: CarRacingEnvWrapper, total_reward):
     state_image, info = env.reset(seed=int(np.random.randint(0, int(1e6))))
 
     while not DONE:
-        
+
         # returns an image with 0s for the path and 1s where its offroad --> penalty
         image = lane_detection.reinforcement_lane_detection(state_image)
-    
+
         visualize(image * 255, state_image)
 
         # calculates the distances around the car, to offroad
         state = path_planning.reinforcement_path_planning(image)
 
         state.speed = info["speed"]
-        
+
         DONE = (  # todo if car offroad -> DONE = 1
             image[CarConst.start_h][CarConst.start_w] == 1
             and image[CarConst.end_h][CarConst.start_w] == 1
             and image[CarConst.start_h][CarConst.end_w] == 1
             and image[CarConst.end_h][CarConst.end_w] == 1
         )
-        if DONE: print("DONE, Offroad!! ")
+        if DONE:
+            print("DONE, Offroad!! ")
 
         a = agent.choose_action(state)
-        action = [a.steering, a.acceleration, 0] if a.acceleration > 0 else [a.steering, 0, -a.acceleration]
+        action = (
+            [a.steering, a.acceleration, 0]
+            if a.acceleration > 0
+            else [a.steering, 0, -a.acceleration]
+        )
 
         state_image, reward, _, _, info = env.step(action)
 
         # calculate the agents reward based on speed and score
         # r = reward -*+/ time
 
-        agent.update_q_table(state=state, action=action, reward=reward)# ,next_state???)
+        agent.update_q_table(
+            state=state, action=action, reward=reward
+        )  # ,next_state???)
 
         total_reward += reward
-
-
 
 
 def main():

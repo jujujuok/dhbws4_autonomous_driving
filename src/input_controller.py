@@ -30,7 +30,9 @@ class InputController:
 
         # Initialize joysticks if they are available
         pygame.joystick.init()
-        self.joystick = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())]
+        self.joystick = [
+            pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())
+        ]
 
     def update(self):
         for event in pygame.event.get():
@@ -49,10 +51,13 @@ class InputController:
             self.steer = self.joystick[0].get_axis(0) ** 3
         else:
             keys = pygame.key.get_pressed()
-            self.accelerate = 0.5 if keys[pygame.K_w] or keys[pygame.K_UP]else 0
+            self.accelerate = 0.5 if keys[pygame.K_w] or keys[pygame.K_UP] else 0
             self.brake = 0.8 if keys[pygame.K_s] or keys[pygame.K_DOWN] else 0
-            self.steer = 1 if keys[pygame.K_d] or keys[pygame.K_RIGHT] else \
-                (-1 if keys[pygame.K_a] or keys[pygame.K_LEFT]else 0)
+            self.steer = (
+                1
+                if keys[pygame.K_d] or keys[pygame.K_RIGHT]
+                else (-1 if keys[pygame.K_a] or keys[pygame.K_LEFT] else 0)
+            )
 
     def key_press(self, event):
         if event.key == pygame.K_ESCAPE:

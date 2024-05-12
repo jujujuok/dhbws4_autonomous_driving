@@ -47,15 +47,25 @@ def run(env, input_controller: InputController):
 
         # Draw each vector from the 'state' object
         for attr_name in dir(state):
-            if not attr_name.startswith('__') and isinstance(getattr(state, attr_name), DistDir):
+            if not attr_name.startswith("__") and isinstance(
+                getattr(state, attr_name), DistDir
+            ):
                 vec = getattr(state, attr_name)
                 # Calculate end position for each vector
                 end_pos_w = base_pos_w + vec.w * vec.dist
                 end_pos_h = base_pos_h + vec.h * vec.dist
                 # Draw line
-                cv_image = cv2.line(cv_image, (base_pos_w, base_pos_h), (end_pos_w, end_pos_h), [255, 0, 0], 1)
+                cv_image = cv2.line(
+                    cv_image,
+                    (base_pos_w, base_pos_h),
+                    (end_pos_w, end_pos_h),
+                    [255, 0, 0],
+                    1,
+                )
                 # Draw circle at the end of the vector
-                cv_image = cv2.circle(cv_image, (end_pos_w, end_pos_h), 1, [0, 255, 0], 1)
+                cv_image = cv2.circle(
+                    cv_image, (end_pos_w, end_pos_h), 1, [0, 255, 0], 1
+                )
 
         cv_image = cv2.resize(cv_image, (cv_image.shape[1] * 6, cv_image.shape[0] * 6))
         cv2.imshow("Car Racing - Lateral Control", cv_image)

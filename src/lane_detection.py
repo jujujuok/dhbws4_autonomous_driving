@@ -55,8 +55,8 @@ class LaneDetection:
             image (np.ndarray): raw image
 
         Returns:
-            np.ndarray: image with 
-                        - 1 for the lane, 
+            np.ndarray: image with
+                        - 1 for the lane,
                         - 0 for offset and road
         """
 
@@ -80,8 +80,8 @@ class LaneDetection:
             image (np.ndarray): raw image
 
         Returns:
-            np.ndarray: image with 
-                        - 1 for the lane, 
+            np.ndarray: image with
+                        - 1 for the lane,
                         - 0 for offset and road
         """
 

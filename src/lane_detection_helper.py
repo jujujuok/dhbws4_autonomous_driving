@@ -5,6 +5,7 @@ from scipy.signal import convolve2d
 
 from structs_and_configs import ConfigLaneDetection
 
+
 def detect_green_pixels(img, threshold: int) -> np.ndarray:
     """Detects greenish pixels in an image.
     Only works with default image input, not changed color.
@@ -20,11 +21,10 @@ def detect_green_pixels(img, threshold: int) -> np.ndarray:
 
     img = np.array(img)
 
-
     # Extract RGB channels
-    r = img[:,:,0]
-    g = img[:,:,1]
-    b = img[:,:,2]
+    r = img[:, :, 0]
+    g = img[:, :, 1]
+    b = img[:, :, 2]
 
     # Check condition for greenish pixels
     green_mask = (g > r + threshold) & (g > b + threshold)
@@ -38,7 +38,6 @@ def detect_green_pixels(img, threshold: int) -> np.ndarray:
     return green_mask
 
 
-@staticmethod
 def edge_detection(img: np.ndarray) -> np.ndarray:
     """Best one but slow
 
@@ -101,7 +100,6 @@ def edge_detection(img: np.ndarray) -> np.ndarray:
     return sobel_result
 
 
-@staticmethod
 def edge_detect_scipy(img: np.ndarray) -> np.ndarray:
     """Fast, but not optimal output so far.
 
@@ -146,4 +144,3 @@ def edge_detect_scipy(img: np.ndarray) -> np.ndarray:
 
         plt.show()
     return magnitude
-

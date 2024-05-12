@@ -15,7 +15,6 @@ from time import time
 
 
 def run(env, input_controller: InputController):
-    t = time()
     lane_detection = LaneDetection()
     path_planning = PathPlanning()
 
@@ -23,8 +22,7 @@ def run(env, input_controller: InputController):
     state_image, info = env.reset(seed=seed)
     total_reward = 0.0
 
-    if t>3: print("start")
-    while not input_controller.quit and t>3:
+    while not input_controller.quit:
         image = lane_detection.detect(state_image)
 
         test_visualize(image)

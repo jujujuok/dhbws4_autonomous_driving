@@ -18,18 +18,6 @@ class ConfigLaneDetection:
     debug: bool = False
 
 
-@dataclass
-class RLConfig:  # ReinforcementLearning
-    train: bool = True
-    test: bool = False
-
-    state_size: int = 4  # Number of features (current speed and distances to lanes)
-    action_size: int = 2  # Number of actions (steering, gas, braking)
-
-    num_episodes: int = 1000
-    # reward: int
-
-
 class DistDir:
     def __init__(self, h: int, w: int):
         self.dist: float = 0
@@ -43,6 +31,50 @@ class DistDir:
         return np.linalg.norm(self.get_vector())
 
 
+class State:
+    def __init__(self):
+        self.speed: float
+        self.left: DistDir
+        self.right: DistDir
+        self.front: DistDir
+        self.front_left: DistDir
+        self.front_right: DistDir
+        self.front_right_r: DistDir
+        self.front_left_l: DistDir
+
+    def state_list(self) -> list[DistDir]:
+        return [
+            self.left,
+            self.right,
+            self.front_left,
+            self.front_right,
+            self.front_left_l,
+            self.front_right_r,
+        ]
+
+
+@dataclass
+class CarConst:
+    pos_w: int = 48
+    pos_h: int = 64
+    start_h: int = 65
+    end_h: int = 78
+    start_w: int = 44
+    end_w: int = 51
+
+
+@dataclass
+class RLConfig:  # ReinforcementLearning
+    train: bool = True
+    test: bool = False
+
+    state_size: int = 4  # Number of features (current speed and distances to lanes)
+    action_size: int = 2  # Number of actions (steering, gas, braking)
+
+    num_episodes: int = 1000
+    # reward: int
+
+
 @dataclass
 class RLAction:
     """
@@ -54,28 +86,3 @@ class RLAction:
     steering: float = 0  # [-1:1]
     acceleration: float = 0  # [-1:1] -> gas:[0,1]; breaking: [-1,0]
     action_size: int = 2
-
-
-class State:
-    def __init__(self):
-        self.speed: float  # todo: needed?
-        self.left: DistDir
-        self.right: DistDir
-        self.front: DistDir
-        self.front_left: DistDir
-        self.front_right: DistDir
-        self.front_right_r: DistDir
-        self.front_left_l: DistDir
-
-    def state_list(self) -> list[DistDir]:
-        return [self.left, self.right, self.front_left, self.front_right, self.front_left_l, self.front_right_r]
-
-
-@dataclass
-class CarConst:
-    pos_w: int = 48
-    pos_h: int = 64
-    start_h: int = 65
-    end_h: int = 78
-    start_w: int = 44
-    end_w: int = 51

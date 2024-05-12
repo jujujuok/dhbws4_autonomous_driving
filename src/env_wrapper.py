@@ -20,21 +20,21 @@ class CarRacingEnvWrapper(gym.Wrapper):
 
     def reset(self, **kwargs):
         observation, info = super().reset(**kwargs)
-        info['speed'] = self._get_speed()
-        info['trajectory'] = self._get_trajectory_groundtruth()
+        info["speed"] = self._get_speed()
+        info["trajectory"] = self._get_trajectory_groundtruth()
         left_lane_boundary, right_lane_boundary = self._get_lane_boundary_groundtruth()
-        info['left_lane_boundary'] = left_lane_boundary
-        info['right_lane_boundary'] = right_lane_boundary
+        info["left_lane_boundary"] = left_lane_boundary
+        info["right_lane_boundary"] = right_lane_boundary
 
         return observation, info
 
     def step(self, action: gym.core.ActType):
         observation, reward, done, truncated, info = super().step(action)
-        info['speed'] = self._get_speed()
-        info['trajectory'] = self._get_trajectory_groundtruth()
+        info["speed"] = self._get_speed()
+        info["trajectory"] = self._get_trajectory_groundtruth()
         left_lane_boundary, right_lane_boundary = self._get_lane_boundary_groundtruth()
-        info['left_lane_boundary'] = left_lane_boundary
-        info['right_lane_boundary'] = right_lane_boundary
+        info["left_lane_boundary"] = left_lane_boundary
+        info["right_lane_boundary"] = right_lane_boundary
 
         return observation, reward, done, truncated, info
 
@@ -89,7 +89,9 @@ class CarRacingEnvWrapper(gym.Wrapper):
 
             # Create spline points from spline tck
             t = np.linspace(0, 1, 10000)
-            right_lane_boundary = np.array(splev(t, right_boundary_tck)).reshape(2, -1).T
+            right_lane_boundary = (
+                np.array(splev(t, right_boundary_tck)).reshape(2, -1).T
+            )
 
         # Filter out points that are not in the image
         left_lane_boundary = left_lane_boundary[left_lane_boundary[:, 0] < 96]
@@ -115,10 +117,14 @@ class CarRacingEnvWrapper(gym.Wrapper):
 
         # Iterate through the road segments
         for segment in road_segments:
-            trajectory.append(np.asarray([
-                (segment[0][0] + segment[1][0]) / 2,
-                (STATE_H - segment[0][1] + STATE_H - segment[1][1]) / 2
-            ]))
+            trajectory.append(
+                np.asarray(
+                    [
+                        (segment[0][0] + segment[1][0]) / 2,
+                        (STATE_H - segment[0][1] + STATE_H - segment[1][1]) / 2,
+                    ]
+                )
+            )
 
         trajectory = np.asarray(trajectory)
 
@@ -140,10 +146,10 @@ class CarRacingEnvWrapper(gym.Wrapper):
         road_segments = []
 
         # Compute the transformation
-        angle = - self.car.hull.angle
+        angle = -self.car.hull.angle
         zoom = 0.1 * SCALE * max(1 - self.t, 0) + ZOOM * SCALE * min(self.t, 1)
-        scroll_x = - (self.car.hull.position[0]) * zoom
-        scroll_y = - (self.car.hull.position[1]) * zoom
+        scroll_x = -(self.car.hull.position[0]) * zoom
+        scroll_y = -(self.car.hull.position[1]) * zoom
         trans = pygame.math.Vector2((scroll_x, scroll_y)).rotate_rad(angle)
         trans = (WINDOW_W / 2 + trans[0], WINDOW_H / 4 + trans[1])
 
@@ -160,7 +166,9 @@ class CarRacingEnvWrapper(gym.Wrapper):
             # Apply the transformation
             poly = [pygame.math.Vector2(c).rotate_rad(angle) for c in poly]
             poly = [(c[0] * zoom + trans[0], c[1] * zoom + trans[1]) for c in poly]
-            poly = np.multiply(np.asarray(poly[:2]), [STATE_W / WINDOW_W, STATE_H / WINDOW_H])
+            poly = np.multiply(
+                np.asarray(poly[:2]), [STATE_W / WINDOW_W, STATE_H / WINDOW_H]
+            )
 
             road_segments.append(poly)
 

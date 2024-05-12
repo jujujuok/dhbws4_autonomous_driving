@@ -27,7 +27,7 @@ def angle_of_vectors(a: np.ndarray, b: np.ndarray) -> float:
     if a_norm == 0 or b_norm == 0:
         # raise ValueError("One or both vectors have zero length.")
         return 90  # drive forwards
-    
+
     dot_product = np.dot(a, b)
 
     cos_theta = dot_product / (a_norm * b_norm)
