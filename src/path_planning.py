@@ -28,11 +28,8 @@ class PathPlanning:
             dh = dh + state.front.h
             state.front.dist = state.front.dist + 1
 
-        #print(f"\n\nfront: {state.front.get_vector()}, \t length: {state.front.get_length()}")
-
         if DEBUG:
             print(f"\n\nfront: {state.front.get_vector()}, \t length: {state.front.get_length()}")
-
 
         for element in state.state_list():
             dw = CarConst.pos_w
@@ -49,16 +46,10 @@ class PathPlanning:
             ):
                 dh = dh + element.h
                 dw = dw + element.w
-                element.dist = element.dist + 1
-
-                # mark the looked up ways for distances grey
-                # image[dh][dw] = 0.5
-
-            #print(f"vector: {element.get_vector()} , \t length: {element.get_length()}")
+                element.dist = element.dist + np.linalg.norm([element.w, element.h]) # ! changed distance calculation
 
             if DEBUG:
                 print(f"vector: {element.get_vector()} , \t length: {element.get_length()}")
-
 
         return state
 
@@ -75,7 +66,7 @@ class PathPlanning:
         lv = state.front
 
         for element in state.state_list():
-            if element.dist > lv.dist:
+            if element.dist > lv.dist and element.dist < CarConst.pos_h*1.1: # !
                 lv = element
 
         return state, lv.get_vector()
