@@ -1,12 +1,5 @@
 # Abschlussprojekt: Autonomer Rennwagen
 
-``` txt
-Matrikelnummer: 3222108
-Matrikelnummer: 9994799
-```
-
-Das Repo ist öffentlich [einsehbar](https://github.com/jujujuok/dhbws4_autonomous_driving).
-
 Dieses "Framework" enthält eine grundlegende Struktur für die Umsetzung einer modularen Pipeline für die Gymnasium Car Racing Simulation ([link](https://gymnasium.farama.org/environments/box2d/car_racing/)).
 
 ## 0. Requirements
