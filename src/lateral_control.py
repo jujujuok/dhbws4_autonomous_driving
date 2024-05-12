@@ -19,12 +19,6 @@ class LateralControl:
         if longest_vector[0] == 0 and longest_vector[1] == 0:
             return 0
 
-        # Modifiziere die y-Komponente von longest_vector basierend auf ihrem Vorzeichen
-        if longest_vector[1] > 0:
-            longest_vector[1] += 9  # Erhöhe die y-Komponente, von Longest Vektor
-        elif longest_vector[1] < 0:
-            longest_vector[1] -= 9  # Verringere die y-Komponente, von Longest Vektor
-
         # Berechne den Winkel zwischen longest_vector und dem Richtungsvektor des Fahrzeuges
         angle = angle_of_vectors(longest_vector, np.array([0, -1]))
         # Normalisiere den Winkel zu einem Lenkbefehl

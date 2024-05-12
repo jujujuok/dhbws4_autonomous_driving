@@ -41,8 +41,9 @@ class LongitudinalControl:
 
     # berechnung Zielgeschwindigkeit basierend auf Lenkwinkel und Betrag Longest Vektor
     def predict_target_speed(self, angle: float, magnitude: float) -> float:
-        base_speed = 36  # Basisgeschwindigkeit
-        speed_adjustment = np.cos(angle)  # Geschwindigkeitsanpassung durch cos des Winkels
+        base_speed = 35  # Basisgeschwindigkeit
+        speed_adjustment = 2 * np.cos(angle)  # Geschwindigkeitsanpassung durch cos des Winkels
+        #print(speed_adjustment)
         magnitude_factor = 0.1 * magnitude  # Faktor basierend auf der Lenkintensität
         # Zusätzliche Anpassung
         magnitude_factor2 = -1 * (magnitude_factor - magnitude) / 6
