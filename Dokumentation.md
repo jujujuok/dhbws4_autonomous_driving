@@ -42,6 +42,8 @@ Es wird eine Binärisierung durchgeführt, um die Kanten hervorzuheben (image > 
 Abschließend wird ein Bereich des Bildes maskiert, um das eigene Fahrzeug auszublenden und so die Verarbeitung
 zu vereinfachen.
 
+Für die Evaluierung der verschiedenen lane detection Algorithmen kann lane_detection.py direkt in der Konsole gestartet werden.
+
 ### 2.2 Datei path_planning.py
 
 Die Klasse PathPlanning ist für die Pfadplanung/-bestimmung für ein autonomes Fahrzeugsystem zuständig.
