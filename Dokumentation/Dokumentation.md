@@ -21,19 +21,19 @@ working-dir/
 
 Enthält Konstanten und Strukturklassen, die innerhalb des gesammten Projekts verwendet werden.
 
-### 2.1 Datei car.py
+### 2.1 Datei [car.py](../src/car.py)
 
 In der Datei car.py ist die Car-Klasse definiert, welche die Entscheidungsfindung eines autonomen
 Fahrzeugs übernimmt, indem sie Sensorbeobachtungen (mittels Vektoren) verarbeitet und Fahrentscheidungen trifft.
 Dabei sind unter anderem die Spurerkennung, Pfadplanung sowie Queer- und
 Längsregelung, um Lenkwinkel, Beschleunigung und Bremsung zu berechnen.
 
-### 2.2 Datei lane_detection.py
+### 2.2 Datei [lane_detection.py](../src/lane_detection.py)
 
 Die Klasse LaneDetection ist für die Erkennung der Fahrspuren in Bildern
 des Fahrzeugs zuständig.
 
-Von Car.py aufgerufen wird die Funktion "detect"
+<img src="ld_input_example.png" alt="Input Example" width="200">
 
 Diese Methode 'detect_lanes' nimmt ein Bild als Eingabe und führt eine Vorverarbeitung durch, indem sie das Bild
 beschneidet, um Teile der Anzeige zu entfernen. Anschließend wird die Kantenerkennung auf das Bild angewendet.
@@ -42,36 +42,43 @@ Es wird eine Binärisierung durchgeführt, um die Kanten hervorzuheben (image > 
 Abschließend wird ein Bereich des Bildes maskiert, um das eigene Fahrzeug auszublenden und so die Verarbeitung
 zu vereinfachen.
 
-Für die Evaluierung der verschiedenen lane detection Algorithmen kann lane_detection.py direkt in der Konsole gestartet werden.
+Für die __Evaluierung__ der verschiedenen __lane detection__ Algorithmen kann die [Lane Detection](../src/lane_detection.py) mit dem Beispielbild, das oben dargestellt ist, direkt in der Konsole gestartet werden.
 
-### 2.2 Datei path_planning.py
+### 2.2 Datei [path_planning.py](../src/path_planning.py)
 
 Die Klasse PathPlanning ist für die Pfadplanung/-bestimmung für ein autonomes Fahrzeugsystem zuständig.
 
-Die Methode 'sensor_application' verwendet ein Bild, um die Abstände und Richtungen zu potenziellen
-Hindernissen oder Fahrspurlinien in verschiedenen Richtungen relativ zur aktuellen Position des
+<img src="path_planning_example.png" alt="Path Planning Example" width="200">
+
+Die Methode 'sensor_application' verwendet die erkannten Fahrspuren der __LaneDetection__, um die Abstände und Richtungen Fahrspurlinien in verschiedenen Richtungen relativ zur aktuellen Position des
 Fahrzeugs zu bestimmen. Dabei werden unterschiedliche Vektoren definiert, um die Umgebung des
 gesamten Fahrzeugs zu erkennen.
 
-In der Methode 'plan' wird der längste Vektor berechnet, welcher im späteren Verlauf eine
-entscheidende Rolle für die Querregelung ist.
+In der Methode 'plan' wird der längste Vektor berechnet, welcher im späteren Verlauf eine entscheidende Rolle für Quer-/ und Längsregelung ist.
 
-### 2.3 Datei lateral_control.py
+Die Funktion kann mit [Test Path Planning](../src/test_path_planning.py) getestet werden, allerdings ist die Visualisierung aktuell nicht korrekt.
+
+### 2.3 Datei [lateral_control.py](../src/lateral_control.py)
 
 In dieser Klasse wird mittels dem längsten Vektor der Winkel zwischen der
-Fahrtrichtung und dem Richtungsvektor des Fahrzeugs berechnet. Dabei zeigt der längste Vektor, wo
-das Fahrzeug hinfahren soll.
+Fahrtrichtung und dem Richtungsvektor des Fahrzeugs berechnet. Dabei zeigt der längste Vektor, die Richtung in die das Fahrzeug hinfahren soll.
 
-### 2.3 Datei longitudinal_control.py
+### 2.3 Datei [longitudinal_control.py](../src/longitudinal_control.py)
 
 In dieser Klasse wird mittels einem PID-Regler die Längsregelung des Fahrzeuges gesteuert. Dabei wird
-die Zielgeschwindigkeit mit unterschiedlicher Mathematik berechnet.
+die Zielgeschwindigkeit unter anderem in Abhängigkeit zum aktuell längsten
+erkannten Vektor berechnet.
 
-## 3. Ausführung
+## 3. Möglichkeiten für eine Weiterentwicklung
+
+- [reinforcement learning](../src/reinforcement_learning/) fertigstellen
+- multithreading implementieren
+
+## 4. Ausführung
 
 1. In dern Ordner ../src navigieren
 2. Venv umgebung starten
-3. In Der Konsole  `python main.py` ausführen
+3. [`main.py`](../src/main.py) ausführen
 
-Die Simulation wird sich öffnen und das Fahrzeug wird sich entsprechend
+Die Simulation wird sich öffnen und das Fahrzeug sich entsprechend
 der Pipeline bewegen.
