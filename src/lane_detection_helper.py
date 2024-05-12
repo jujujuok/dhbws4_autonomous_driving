@@ -127,7 +127,7 @@ def edge_detect_scipy(img: np.ndarray) -> np.ndarray:
     # Normalize magnitude to lie between 0 and 255
     # magnitude *= 255.0 / np.max(magnitude)
     
-    threshold = 50  
+    threshold = 70
     magnitude = (magnitude > threshold) * 255
 
     if ConfigLaneDetection.debug:

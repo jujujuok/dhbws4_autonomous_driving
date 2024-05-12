@@ -71,7 +71,7 @@ erkannten Vektor berechnet.
 
 ## 3. Möglichkeiten für eine Weiterentwicklung
 
-- [reinforcement learning](../src/reinforcement_learning/) fertigstellen
+- [reinforcement learning](../src/reinforcement.py) fertigstellen
 - multithreading implementieren
 
 ## 4. Ausführung

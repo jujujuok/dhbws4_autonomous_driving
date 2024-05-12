@@ -52,7 +52,7 @@ class PathPlanning:
                 added_length = np.linalg.norm(
                     [element.w, element.h]
                 )  # ! changed distance calculation
-                element.dist = element.dist + 1#added_length
+                element.dist = element.dist + added_length
 
             if DEBUG:
                 print(
@@ -83,5 +83,4 @@ class PathPlanning:
         return self.sensor_application(image)
 
     def reinforcement_path_planning(self, image: np.ndarray) -> State:
-
         return self.sensor_application(image)

@@ -7,3 +7,4 @@ scipy
 opencv-python
 gymnasium
 gymnasium[box2d]
+neat-python
