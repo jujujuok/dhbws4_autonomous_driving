@@ -49,6 +49,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--no_display", action="store_true", default=False)
     parser.add_argument("--domain_randomize", action="store_true", default=False)
+    parser.add_argument("--parallel", action="store_true", default=False)
     args = parser.parse_args()
 
     episodes = 50
@@ -58,7 +59,7 @@ def main():
         seed = int(np.random.randint(0, int(1e6)))
         parameters.append((args, seed))
 
-    parallel = multi.cpu_count() - 1    # one less to keep the system responsive
+    parallel = multi.cpu_count() - 1 if args.parallel else 1
     rewards = []
 
     with multi.Pool(parallel) as p:
