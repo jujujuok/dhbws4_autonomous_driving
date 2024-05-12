@@ -2,18 +2,22 @@ from __future__ import annotations
 
 import argparse
 
-import gymnasium as gym
 import cv2
+import gymnasium as gym
 import numpy as np
 
 from env_wrapper import CarRacingEnvWrapper
 from input_controller import InputController
+from path_planning import PathPlanning
 from lane_detection import LaneDetection
 from utils import test_visualize
+from time import time
 
 
-def run(env: CarRacingEnvWrapper, input_controller: InputController):
+def run(env, input_controller: InputController):
+    t = time()
     lane_detection = LaneDetection()
+    path_planning = PathPlanning()
 
     seed = int(np.random.randint(0, int(1e6)))
     state_image, info = env.reset(seed=seed)
@@ -24,13 +28,11 @@ def run(env: CarRacingEnvWrapper, input_controller: InputController):
 
         test_visualize(image)
 
-        lane_detection.detect(state_image)
+        state, longest_vector = path_planning.plan(image)
 
-        cv_image = np.asarray(lane_detection.debug_image, dtype=np.uint8)
-        cv_image = cv2.cvtColor(cv_image, cv2.COLOR_RGB2BGR)
-        cv_image = cv2.resize(cv_image, np.asarray(state_image.shape[:2]) * 6)
-        cv2.imshow("Car Racing - Lane Detection", cv_image)
-        cv2.waitKey(1)
+        print(f"distance front: {state.front.dist}, longest_vector: {longest_vector}")
+
+        # visualize
 
         # Step the environment
         input_controller.update()

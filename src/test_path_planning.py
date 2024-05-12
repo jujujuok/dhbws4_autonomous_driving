@@ -1,37 +1,72 @@
 from __future__ import annotations
 
 import argparse
-
 import cv2
 import gymnasium as gym
 import numpy as np
-
+from structs_and_configs import CarConst, ImageConfig, DistDir, State
 from env_wrapper import CarRacingEnvWrapper
 from input_controller import InputController
+from lateral_control import LateralControl
 from path_planning import PathPlanning
 from lane_detection import LaneDetection
-from utils import test_visualize
-from time import time
+from structs_and_configs import CarConst
 
 
 def run(env, input_controller: InputController):
-    lane_detection = LaneDetection()
+    lateral_control = LateralControl()
     path_planning = PathPlanning()
+    lane_detection = LaneDetection()
 
     seed = int(np.random.randint(0, int(1e6)))
     state_image, info = env.reset(seed=seed)
     total_reward = 0.0
 
     while not input_controller.quit:
-        image = lane_detection.detect(state_image)
 
-        test_visualize(image)
+        image = lane_detection.detect(state_image)
 
         state, longest_vector = path_planning.plan(image)
 
         print(f"distance front: {state.front.dist}, longest_vector: {longest_vector}")
 
-        # visualize
+        angle = lateral_control.control(longest_vector, state)
+        # ----------- visualization -----------
+
+        cv_image = image * 255
+        cv_image = np.asarray(cv_image, dtype=np.uint8)
+
+        cv_image = cv2.cvtColor(cv_image, cv2.COLOR_RGB2BGR)
+
+        # Starting position for vectors, adjust as needed
+        base_pos_w, base_pos_h = CarConst.pos_w, CarConst.pos_h
+
+        # Draw each vector from the 'state' object
+        for attr_name in dir(state):
+            if not attr_name.startswith("__") and isinstance(
+                getattr(state, attr_name), DistDir
+            ):
+                vec = getattr(state, attr_name)
+                # Calculate end position for each vector
+                end_pos_w = base_pos_w + vec.w * vec.dist
+                end_pos_h = base_pos_h + vec.h * vec.dist
+                # Draw line
+                cv_image = cv2.line(
+                    cv_image,
+                    (base_pos_w, base_pos_h),
+                    (end_pos_w, end_pos_h),
+                    [255, 0, 0],
+                    1,
+                )
+                # Draw circle at the end of the vector
+                cv_image = cv2.circle(
+                    cv_image, (end_pos_w, end_pos_h), 1, [0, 255, 0], 1
+                )
+
+        cv_image = cv2.resize(cv_image, (cv_image.shape[1] * 6, cv_image.shape[0] * 6))
+        cv2.imshow("Car Racing - Lateral Control", cv_image)
+        cv2.waitKey(1)
+        # ------------
 
         # Step the environment
         input_controller.update()
