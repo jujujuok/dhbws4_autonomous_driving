@@ -48,8 +48,8 @@ def run(env, input_controller: InputController):
             ):
                 vec = getattr(state, attr_name)
                 # Calculate end position for each vector
-                end_pos_w = base_pos_w + vec.w * vec.dist
-                end_pos_h = base_pos_h + vec.h * vec.dist
+                end_pos_w = base_pos_w + vec.w * int(vec.dist) #todo DISPLAYING IS CURRENTLY NOT CORRECT
+                end_pos_h = base_pos_h + vec.h * int(vec.dist)
                 # Draw line
                 cv_image = cv2.line(
                     cv_image,

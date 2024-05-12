@@ -49,9 +49,10 @@ class PathPlanning:
             ):
                 dh = dh + element.h
                 dw = dw + element.w
-                element.dist = element.dist + np.linalg.norm(
+                added_length = np.linalg.norm(
                     [element.w, element.h]
                 )  # ! changed distance calculation
+                element.dist = element.dist + 1#added_length
 
             if DEBUG:
                 print(
