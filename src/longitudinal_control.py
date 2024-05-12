@@ -3,7 +3,7 @@ import numpy as np
 
 class LongitudinalControl:
     # Initialisiesirung PID-Reglerparameter
-    def __init__(self, Kp: float = 0.1, Ki: float = 0.018, Kd: float = 0.0):
+    def __init__(self, Kp: float = 0.1, Ki: float = 0.015, Kd: float = 0.0):
         self.Kp = Kp  # Proportionalbeiwert
         self.Ki = Ki  # Integralbeiwert
         self.Kd = Kd  # Differentialbeiwert
@@ -41,14 +41,14 @@ class LongitudinalControl:
 
     # berechnung Zielgeschwindigkeit basierend auf Lenkwinkel und Betrag Longest Vektor
     def predict_target_speed(self, angle: float, magnitude: float) -> float:
-        base_speed = 35  # Basisgeschwindigkeit
-        speed_adjustment = 2 * np.cos(angle)  # Geschwindigkeitsanpassung durch cos des Winkels
+        base_speed = 33  # Basisgeschwindigkeit
+        speed_adjustment = 1.5 * np.cos(angle)  # Geschwindigkeitsanpassung durch cos des Winkels
         #print(speed_adjustment)
         magnitude_factor = 0.1 * magnitude  # Faktor basierend auf der Lenkintensität
         # Zusätzliche Anpassung
         magnitude_factor2 = -1 * (magnitude_factor - magnitude) / 6
         # Geschwindigkeitsberechnung kombiniert
-        return max(10, base_speed + magnitude_factor + magnitude_factor2 + speed_adjustment)
+        #return max(10, base_speed + magnitude_factor + magnitude_factor2 + speed_adjustment)
 
         # Falls etwas agresiver gefahren werden soll, kann aber aß der Kurve Fliegen
-        #return max(10, base_speed + magnitude_factor + magnitude_factor2 + speed_adjustment) * 1.18
+        return max(10, base_speed + magnitude_factor + magnitude_factor2 + speed_adjustment) * 1.2

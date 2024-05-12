@@ -22,5 +22,5 @@ class LateralControl:
         # Berechne den Winkel zwischen longest_vector und dem Richtungsvektor des Fahrzeuges
         angle = angle_of_vectors(longest_vector, np.array([0, -1]))
         # Normalisiere den Winkel zu einem Lenkbefehl
-        angle = ((angle - 90) / 90) * 1.5
+        angle = ((angle - 90) / 90)
         return angle
