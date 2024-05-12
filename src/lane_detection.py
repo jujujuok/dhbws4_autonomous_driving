@@ -3,60 +3,87 @@ from __future__ import annotations
 from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
+from time import time
 
-from structs_and_configs import CarConst, ImageConfig, ConfigLaneDetection
-
-from helper import show_plt_img_grey
+from structs_and_configs import CarConst, ImageConfig
 
 from lane_detection_helper import detect_green_pixels, edge_detect_scipy, edge_detection
 
 
 class LaneDetection:
 
-    def __init__(self):
-        self.evaluate = False  # ConfigLaneDetection.evaluate
-        self.debug = True
-        self.debug_image: np.ndarray 
-
     def evaluation_detect(self, image):
+        """
+        for evaluation of the different edge
+        detection functions that are implemented
+
+        Args:
+            image (np.ndarray): image input from which
+                                the edges should be detected
+        """
+        t = time()
+        g = detect_green_pixels(image, threshold=50)
+        dt_g = time()
+        e = edge_detection(image)
+        dt_e = time()
+        s = edge_detect_scipy(image)
+        dt_s = time()
+
         images = {
-            "green": detect_green_pixels(image, threshold=50),
-            "edge detect": edge_detection(image),
-            "scipy": edge_detect_scipy(image),
+            # [image with applied detection, time to calculate]
+            "green": [g, dt_g - t],
+            "edge detect": [e, dt_e - dt_g],
+            "scipy": [s, dt_s - dt_e],
         }
 
         plt.figure(figsize=(12, 6))
 
-        for i, (title, img) in enumerate(images.items()):
+        for i, (title, img_time) in enumerate(images.items()):
             plt.subplot(1, len(images), i + 1)
-            plt.imshow(img, cmap="gray")
-            plt.title(title)
+            plt.imshow(img_time[0], cmap="gray")
+            plt.title(f"{title}\ntime to detect: {str(img_time[1])}")
 
         plt.show()
 
-        return images["scipy"]
-    
-    def reinforcement_lane_detection(self, image) -> np.ndarray:
-        return detect_green_pixels(image, threshold=50)
-
     def detect_lanes(self, image: np.ndarray) -> np.ndarray:
-        # crop info display
+        """
+        1) crops the image
+        2) applies the detection
+        3) masks the car
+
+        Args:
+            image (np.ndarray): raw image
+
+        Returns:
+            np.ndarray: image with 
+                        - 1 for the lane, 
+                        - 0 for offset and road
+        """
+
         image = image[: image.shape[0] - ImageConfig.displaycrop, :, :]
 
-        image = (
-            edge_detect_scipy(image)
-            if not self.evaluate
-            else self.evaluation_detect(image)
-        )
+        image = edge_detect_scipy(image)
 
         image = (image > 70).astype(np.uint8)
 
-        # mask the car
         image[CarConst.start_h : CarConst.end_h, CarConst.start_w : CarConst.end_w] = 0
 
         return image
 
     def detect(self, image: np.ndarray) -> np.ndarray:
+        """
+        public method for the detection
+        1) detect_lanes
+        (2) cluster the lanes to right and left, currently not used)
+
+        Args:
+            image (np.ndarray): raw image
+
+        Returns:
+            np.ndarray: image with 
+                        - 1 for the lane, 
+                        - 0 for offset and road
+        """
 
         image = self.detect_lanes(image=image)
 
@@ -66,6 +93,8 @@ class LaneDetection:
         return image
 
     def lane_clustering(self, image: np.ndarray, min_points: int) -> np.ndarray:
+        # ! this function is currently not part of the pipeline but could possibly
+        # ! provide further information
         """
         - map all values to a 2d numpy array with either ones or zeros.
         - minimal threshold and start with a random 1
@@ -136,36 +165,13 @@ class LaneDetection:
 
 
 if __name__ == "__main__":
-
-    from path_planning import PathPlanning
+    """for evaluation run this file"""
 
     ld = LaneDetection()
-    pp = PathPlanning()
 
-    # i = Image.open("/home/juju/dev/dhbws4_autonomous_driving/src/img/image.jpg")
-    i = Image.open("/home/juju/dev/dhbws4_autonomous_driving/test/img0.jpg")
+    i = Image.open("src/lane_detection_example.png")
 
-    lanes = ld.detect(np.array(i))
-    from helper import test_visualize
+    lanes = ld.evaluation_detect(np.array(i))
+    from utils import test_visualize
+
     test_visualize(lanes)
-
-    print(pp.plan(lanes))
-
-
-"""
-def cv2_sobel(grey_img: np.ndarray):
-    # --- Edge detection ---
-    import cv2
-
-    # Apply Sobel operator in x and y directions
-    sobel_x = cv2.Sobel(grey_img, cv2.CV_64F, 1, 0, ksize=3)
-    sobel_y = cv2.Sobel(grey_img, cv2.CV_64F, 0, 1, ksize=3)
-
-    # Calculate magnitude of gradients
-    gradient_magnitude = np.sqrt(sobel_x**2 + sobel_y**2)
-
-    # Normalize gradient magnitude to range [0, 255]
-    gradient_magnitude *= 255.0 / gradient_magnitude.max()
-
-    return gradient_magnitude.astype(np.uint8)
-"""

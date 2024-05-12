@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt
 import numpy as np
 
 
@@ -12,15 +11,6 @@ def test_visualize(image: np.ndarray):
     cv_image = cv2.resize(cv_image, np.asarray(image.shape[:2]) * 6)
     cv2.imshow("Car Racing - Lane Detection", cv_image)
     cv2.waitKey(1)
-
-
-def show_plt_img_grey(image: np.ndarray):
-    plt.imshow(image, cmap="grey")
-    plt.show()
-
-
-def vector_length(vector: np.ndarray) -> float:
-    return np.linalg.norm(vector)
 
 
 def angle_of_vectors(a: np.ndarray, b: np.ndarray) -> float:

@@ -1,5 +1,5 @@
 import numpy as np
-from helper import angle_of_vectors
+from utils import angle_of_vectors
 from structs_and_configs import FRONT_DIRECTION
 import math
 from structs_and_configs import State

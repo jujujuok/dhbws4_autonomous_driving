@@ -31,19 +31,16 @@ Längsregelung, um Lenkwinkel, Beschleunigung und Bremsung zu berechnen.
 ### 2.2 Datei lane_detection.py
 
 Die Klasse LaneDetection ist für die Erkennung der Fahrspuren in Bildern
-eines autonomen Fahrzeugs zuständig.
+des Fahrzeugs zuständig.
+
+Von Car.py aufgerufen wird die Funktion "detect"
 
 Diese Methode 'detect_lanes' nimmt ein Bild als Eingabe und führt eine Vorverarbeitung durch, indem sie das Bild
 beschneidet, um Teile der Anzeige zu entfernen. Anschließend wird die Kantenerkennung auf das Bild angewendet.
-Hierbei wird zwischen einer Standardkantendetektion und einer umfassenderen Evaluationsdetektion unterschieden,
-basierend auf dem evaluate-Flag. Es wird eine Binärisierung durchgeführt, um die Kanten hervorzuheben (image > 70).
-Abschließend wird ein Bereich des Bildes maskiert, um das eigene Fahrzeug auszublenden und so die Verarbeitung
-zu vereinfachen (CarConst).
 
-Diese Methode 'lane_clustering' segmentiert die erkannten Linien weiter in Cluster, basierend auf ihrer räumlichen
-Nähe und einer Mindestanzahl von Punkten (min_points). Es wird ein rekursiver Ansatz verwendet, um benachbarte Punkte
-zu finden und diesen Clustern zuzuordnen. Die Cluster werden nummeriert, um unterschiedliche Spurlinien zu
-identifizieren und von einander zu unterscheiden.
+Es wird eine Binärisierung durchgeführt, um die Kanten hervorzuheben (image > 70).
+Abschließend wird ein Bereich des Bildes maskiert, um das eigene Fahrzeug auszublenden und so die Verarbeitung
+zu vereinfachen.
 
 ### 2.2 Datei path_planning.py
 

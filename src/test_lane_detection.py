@@ -9,7 +9,7 @@ import numpy as np
 from env_wrapper import CarRacingEnvWrapper
 from input_controller import InputController
 from lane_detection import LaneDetection
-from helper import test_visualize
+from utils import test_visualize
 
 
 def run(env: CarRacingEnvWrapper, input_controller: InputController):
