@@ -49,10 +49,10 @@ class PathPlanning:
             ):
                 dh = dh + element.h
                 dw = dw + element.w
-                element.dist = element.dist + 1
+                element.dist = element.dist + np.linalg.norm(
+                    [element.w, element.h]
+                )  # ! changed distance calculation
 
-                # mark the looked up ways for distances grey
-                # image[dh][dw] = 0.5
             if DEBUG:
                 print(
                     f"vector: {element.get_vector()} , \t length: {element.get_length()}"
@@ -73,7 +73,7 @@ class PathPlanning:
         lv = state.front
 
         for element in state.state_list():
-            if element.dist > lv.dist:
+            if element.dist > lv.dist and element.dist < CarConst.pos_h * 1.1:  # !
                 lv = element
 
         return state, lv.get_vector()
