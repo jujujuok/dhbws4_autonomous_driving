@@ -5,12 +5,14 @@ Matrikelnummer: 3222108
 Matrikelnummer: 9994799
 ```
 
+Das Repo ist öffentlich [einsehbar](https://github.com/jujujuok/dhbws4_autonomous_driving).
+
 Dieses "Framework" enthält eine grundlegende Struktur für die Umsetzung einer modularen Pipeline für die Gymnasium Car Racing Simulation ([link](https://gymnasium.farama.org/environments/box2d/car_racing/)).
 
 ## 0. Requirements
 
-- Python 3.8
-- Ubuntu 20.04 (Empfohlen, kann aber auch abweichen)
+- Python 3.x
+- Ubuntu 22.04 (Empfohlen)
 
 ## 1. Installation
 
@@ -21,12 +23,9 @@ Dieses "Framework" enthält eine grundlegende Struktur für die Umsetzung einer 
     python -m venv .venv
     ```
 
-2. Aktivieren der virtuellen Umgebung: `source .venv/bin/activate`
-3. Nun werden alle Python Befehle in dieser Umgebung ausgeführt und Pakete installiert.
-   **Wichtig: Die Umgebung muss für jedes Terminal neu aktiviert werden.**
-4. In vscode über `strg+shift+P` nach `Python: Select Interpreter` suchen und `.venv` als Interpreter auswählen.
+2. Dependencies installieren
 
-5. Dependencies installieren
+    _Achtung: die virtuelle Umgebung muss aktiviert sein._
 
     ``` bash
     sudo apt-get install swig build-essential python3-dev
@@ -34,13 +33,13 @@ Dieses "Framework" enthält eine grundlegende Struktur für die Umsetzung einer 
     pip install -r src/requirements.txt
     ```
 
-6. Testen der Installation: `python src/test_installation.py`. Danach sollte sich die Simulation öffnen und das Fahrzeug zufällig bewegen.
+3. Testen der Installation: [`test_installation.py`](src/test_installation.py). Danach sollte sich die Simulation öffnen und das Fahrzeug zufällig bewegen.
 
 ## 2. Ausführung
 
 1. In dern Ordner ../src navigieren
 2. Venv umgebung starten
-3. In Der Konsole  `python main.py` ausführen
+3. [`main.py`](src/main.py) ausführen
 
-Die Simulation wird sich öffnen und das Fahrzeug wird sich entsprechend
+Die Simulation wird sich öffnen und das Fahrzeug sich entsprechend
 der Pipeline bewegen.

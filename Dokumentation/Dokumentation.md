@@ -82,3 +82,4 @@ erkannten Vektor berechnet.
 
 Die Simulation wird sich öffnen und das Fahrzeug sich entsprechend
 der Pipeline bewegen.
+
