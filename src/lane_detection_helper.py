@@ -125,7 +125,10 @@ def edge_detect_scipy(img: np.ndarray) -> np.ndarray:
     magnitude = np.sqrt(result_x**2 + result_y**2)
 
     # Normalize magnitude to lie between 0 and 255
-    magnitude *= 255.0 / np.max(magnitude)
+    # magnitude *= 255.0 / np.max(magnitude)
+    
+    threshold = 50  
+    magnitude = (magnitude > threshold) * 255
 
     if ConfigLaneDetection.debug:
         print(f"scipy calculation time: {time() - t} ms")
@@ -139,7 +142,7 @@ def edge_detect_scipy(img: np.ndarray) -> np.ndarray:
 
         plt.subplot(1, 2, 2)
         plt.imshow(magnitude, cmap="gray")
-        # plt.colorbar(label='Magnitude')  # todo
+        
         plt.title("Raw output of edge detection with scipy")
 
         plt.show()
