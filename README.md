@@ -36,3 +36,9 @@ Dieses "Framework" enthält eine grundlegende Struktur für die Umsetzung einer 
 
 Die Simulation wird sich öffnen und das Fahrzeug sich entsprechend
 der Pipeline bewegen.
+
+## 3. Parallele Ausführung mit Multiprocessing
+
+[Multiprocessing](../src/main_multiprocessing.py) mit dem flag `--parallel` ausführen für parallele Auswertung.
+
+Credits an [Fabian @hfxbse](https://github.com/hfxbse), der dieses Feature hinzugefügt hat, weil das [Repo](https://github.com/jujujuok/dhbws4_autonomous_driving) öffentlich einsehbar ist.
