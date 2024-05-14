@@ -71,8 +71,8 @@ erkannten Vektor berechnet.
 
 ## 3. Möglichkeiten für eine Weiterentwicklung
 
-- [reinforcement learning](../src/reinforcement.py) fertigstellen
-- multithreading implementieren
+- [ ] [reinforcement learning](../src/reinforcement.py) fertigstellen
+- [x] multithreading implementieren
 
 ## 4. Ausführung
 
@@ -83,3 +83,6 @@ erkannten Vektor berechnet.
 Die Simulation wird sich öffnen und das Fahrzeug sich entsprechend
 der Pipeline bewegen.
 
+### 4.1 Parallele Ausführung mit Multiprocessing
+
+[Multiprocessing](../src/main_multiprocessing.py) mit dem flag `--parallel` ausführen für parallele Auswertung.
